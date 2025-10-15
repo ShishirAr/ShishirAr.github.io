@@ -1,297 +1,127 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue:wght@400..700&display=swap" rel="stylesheet">
-
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Who’s Viewing? · Portfolio</title>
+
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <meta name="color-scheme" content="dark">
+
   <style>
-    :root {
-      --red: #e50914;
-      --black: #141414;
-      --dark: #2f2f2f;
-      --muted: #b3b3b3;
-      --white: #fff;
+    :root{
+      --red:#e50914;--black:#141414;--dark:#2f2f2f;--muted:#b3b3b3;--white:#fff;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;background:#000;color:var(--white);
+      font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+      display:flex;flex-direction:column;min-height:100vh;overflow-x:hidden;
     }
 
-    * {
-      box-sizing: border-box
+    /* Navbar */
+    .navbar{
+      position:fixed;inset:0 auto auto 0;width:100%;z-index:10;
+      display:flex;justify-content:space-between;align-items:center;
+      padding:16px 24px;background:linear-gradient(to bottom,rgba(0,0,0,.75),transparent)
+    }
+    .logo{color:var(--red);font-weight:800;letter-spacing:.5px;text-decoration:none}
+
+    /* Main */
+    .profile-selection{
+      margin-top:72px;flex:1;display:grid;place-items:center;padding:32px 16px;text-align:center
+    }
+    .profile-title{font-size:clamp(2rem,5vw,3.5rem);margin-bottom:28px}
+
+    /* Grid like Netflix */
+    .profiles{
+      display:grid;
+      grid-template-columns:repeat(5, minmax(120px, 1fr));
+      gap:34px;justify-items:center;max-width:1200px;margin:8px auto 56px;
     }
 
-    html,
-    body {
-      height: 100%
+    /* Picture + name only (no outer box) */
+    .profile-tile{
+      background:transparent;border:0;padding:0;margin:0;
+      cursor:pointer;outline:none;display:block;
+      opacity:0;transform:translate3d(0,10px,0);
+      transition:opacity .45s ease, transform .5s cubic-bezier(.22,.61,.36,1);
+      will-change: transform, opacity;
+    }
+    .profile-tile.reveal{opacity:1;transform:translate3d(0,0,0)}
+
+    /* Inner wrapper floats; its initial transform matches the first keyframe (no snap) */
+    .tile-inner{
+      display:flex;flex-direction:column;align-items:center;gap:10px;
+      transform:translate3d(var(--fxStart,0px),0,0);  /* 👈 start position */
+      will-change: transform;
     }
 
-    body {
-      margin: 0;
-      background: #000;
-      color: var(--white);
-      font: 16px/1.5 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-      overflow-x: hidden
+    .avatar{
+      width:clamp(120px, 15vw, 180px);
+      aspect-ratio:1/1;border-radius:12px;overflow:hidden;position:relative;
+      box-shadow:0 0 0 0 rgba(255,255,255,0);
+      transition:box-shadow .25s ease, transform .28s ease;
+      transform:translate3d(0,0,0) scale(1);
+    }
+    .avatar img{
+      width:100%;height:100%;object-fit:cover;display:block;pointer-events:none;
+      transform:translate3d(0,0,0) scale(1);transition:transform .28s ease;
     }
 
-    .navbar {
-      position: fixed;
-      inset: 0 auto auto 0;
-      width: 100%;
-      z-index: 10;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 16px 24px;
-      background: linear-gradient(to bottom, rgba(0, 0, 0, .75), transparent)
+    /* Hover/focus: subtle lift + ring */
+    .profile-tile:hover .avatar,
+    .profile-tile:focus-visible .avatar{
+      box-shadow:0 0 0 3px #fff;
+      transform:translate3d(0,-2px,0) scale(1.02);
+    }
+    .profile-tile:hover .avatar img,
+    .profile-tile:focus-visible .avatar img{
+      transform:translate3d(0,0,0) scale(1.06);
     }
 
-    .logo {
-      color: var(--red);
-      font-weight: 800;
-      letter-spacing: .5px;
-      text-decoration: none
+    .label{
+      color:#cfcfcf;font-size:1.05rem;letter-spacing:.2px;text-shadow:0 1px 0 rgba(0,0,0,.6);
+    }
+    .profile-tile:hover .label,.profile-tile:focus-visible .label{color:#fff}
+
+    /* Ultra-smooth float: start → mid → end; first frame uses --fxStart so there is zero jump */
+    @keyframes floatXY{
+      0%   { transform:translate3d(var(--fxStart,0px), 0, 0) }
+      50%  { transform:translate3d(var(--fxMid,   6px), -3px, 0) }
+      100% { transform:translate3d(var(--fxEnd,  -0px), 0, 0) }
+    }
+    .float .tile-inner{
+      animation: floatXY var(--floatDur,8s) cubic-bezier(.42,0,.58,1) var(--floatDelay,.2s) infinite;
     }
 
-    .profile-selection {
-      margin-top: 72px;
-      flex: 1;
-      display: grid;
-      place-items: center;
-      padding: 32px 16px;
-      text-align: center
+    /* Pause float for crisp hover control */
+    .profile-tile:hover .tile-inner,
+    .profile-tile:focus-visible .tile-inner{ animation-play-state:paused }
+
+    /* Manage + footer */
+    .manage-profiles{
+      padding:10px 20px;border:1px solid var(--muted);background:transparent;color:var(--muted);
+      border-radius:4px;cursor:pointer
     }
+    .manage-profiles:hover{border-color:var(--white);color:var(--white)}
+    footer{border-top:1px solid var(--dark);color:var(--muted);padding:24px}
+    .social{display:flex;gap:16px;justify-content:center;margin-bottom:12px}
+    .social a{color:var(--muted);font-size:1.3rem}
+    .social a:hover{color:var(--white)}
 
-    .profile-title {
-      font-size: clamp(2rem, 5vw, 3.5rem);
-      margin-bottom: 28px
-    }
+    /* Responsive breakpoints */
+    @media (max-width:1100px){ .profiles{ grid-template-columns:repeat(4,minmax(120px,1fr)) } }
+    @media (max-width:820px){  .profiles{ grid-template-columns:repeat(3,minmax(120px,1fr)) } }
+    @media (max-width:560px){  .profiles{ grid-template-columns:repeat(2,minmax(120px,1fr)); gap:26px } }
 
-    .profiles {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 28px;
-      justify-content: center;
-      max-width: 1100px;
-      margin: 8px auto 56px
-    }
-
-    .profile {
-      width: 180px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
-      cursor: pointer;
-      outline: none
-    }
-
-    .profile:focus-visible .profile-avatar {
-      box-shadow: 0 0 0 3px var(--white)
-    }
-
-    .profile-avatar {
-      width: 150px;
-      height: 150px;
-      border-radius: 6px;
-      overflow: hidden;
-      border: 3px solid transparent;
-      transition: border-color .2s, transform .2s
-    }
-
-    .profile:hover .profile-avatar {
-      border-color: var(--white);
-      transform: scale(1.03)
-    }
-
-    .profile img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover
-    }
-
-    .profile-name {
-      color: var(--muted);
-      font-size: 1.05rem
-    }
-
-    .manage-profiles {
-      padding: 10px 20px;
-      border: 1px solid var(--muted);
-      background: transparent;
-      color: var(--muted);
-      border-radius: 4px;
-      cursor: pointer
-    }
-
-    .manage-profiles:hover {
-      border-color: var(--white);
-      color: var(--white)
-    }
-
-    footer {
-      border-top: 1px solid var(--dark);
-      color: var(--muted);
-      padding: 24px
-    }
-
-    .social {
-      display: flex;
-      gap: 16px;
-      justify-content: center;
-      margin-bottom: 12px
-    }
-
-    .social a {
-      color: var(--muted);
-      font-size: 1.3rem
-    }
-
-    .social a:hover {
-      color: var(--white)
-    }
-
-    @media (max-width:768px) {
-      .profile {
-        width: 140px
-      }
-
-      .profile-avatar {
-        width: 120px;
-        height: 120px
-      }
-    }
-
-    @media (prefers-reduced-motion:reduce) {
-      * {
-        animation: none !important;
-        transition: none !important
-      }
-    }
-
-    /* Netflix-style picker */
-    .profiles {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(140px, 1fr));
-      gap: 28px;
-      justify-items: center;
-      max-width: 1100px;
-      margin: 8px auto 56px;
-    }
-
-    .profile-tile {
-      width: 200px;
-      padding: 12px;
-      background: #2b2b2b;
-      border-radius: 8px;
-      border: 1px solid #3a3a3a;
-      cursor: pointer;
-      outline: none;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 12px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, .35) inset;
-      transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
-      opacity: 0;
-      transform: translateY(14px);
-      /* revealed with animation */
-    }
-
-    .profile-tile.reveal {
-      animation: rise .45s ease forwards;
-    }
-
-    .profile-tile:focus-visible,
-    .profile-tile:hover {
-      transform: translateY(-2px);
-      border-color: #fff;
-      box-shadow: 0 0 0 2px #fff inset, 0 16px 30px rgba(0, 0, 0, .45);
-    }
-
-    .thumb {
-      width: 100%;
-      aspect-ratio: 1/1;
-      border-radius: 6px;
-      overflow: hidden;
-      background: #1a1a1a;
-      border: 2px solid transparent;
-    }
-
-    .thumb img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-      transform: scale(1);
-      transition: transform .25s ease;
-    }
-
-    .profile-tile:hover .thumb img,
-    .profile-tile:focus-visible .thumb img {
-      transform: scale(1.06);
-    }
-
-    .label {
-      color: #cfcfcf;
-      font-size: 1.05rem;
-      letter-spacing: .2px;
-      text-shadow: 0 1px 0 rgba(0, 0, 0, .6);
-    }
-
-    .profile-tile:hover .label,
-    .profile-tile:focus-visible .label {
-      color: #fff;
-    }
-
-    /* staggered entrance */
-    @keyframes rise {
-      0% {
-        opacity: 0;
-        transform: translateY(14px)
-      }
-
-      100% {
-        opacity: 1;
-        transform: translateY(0)
-      }
-    }
-
-    /* responsive rows like Netflix */
-    @media (max-width: 980px) {
-      .profiles {
-        grid-template-columns: repeat(3, minmax(140px, 1fr));
-      }
-    }
-
-    @media (max-width: 720px) {
-      .profiles {
-        grid-template-columns: repeat(2, minmax(140px, 1fr));
-        gap: 20px;
-      }
-
-      .profile-tile {
-        width: 170px;
-      }
-    }
-
-    @media (max-width: 420px) {
-      .profiles {
-        grid-template-columns: 1fr 1fr;
-      }
-
-      .profile-tile {
-        width: 150px;
-      }
+    @media (prefers-reduced-motion:reduce){
+      *{animation:none!important;transition:none!important}
     }
   </style>
 </head>
-
 <body>
   <nav class="navbar" aria-label="Top">
     <a class="logo" href="#">PORTFOLIO</a>
@@ -299,37 +129,36 @@
 
   <main class="profile-selection">
     <h1 class="profile-title">Who’s viewing?</h1>
-    <!-- Profile Picker -->
+
     <div class="profiles" role="list">
       <button class="profile-tile" data-profile="recruiter" role="listitem" aria-label="Recruiter">
-        <div class="thumb"><img
-            src="https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=480&q=80" alt="">
+        <div class="tile-inner">
+          <div class="avatar"><img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=480&q=80" alt="Recruiter"></div>
+          <span class="label">Recruiter</span>
         </div>
-        <span class="label">Recruiter</span>
       </button>
 
       <button class="profile-tile" data-profile="client" role="listitem" aria-label="Client">
-        <div class="thumb"><img
-            src="https://images.unsplash.com/photo-1568602471122-7832951cc4c5?auto=format&fit=crop&w=480&q=80" alt="">
+        <div class="tile-inner">
+          <div class="avatar"><img src="https://images.unsplash.com/photo-1568602471122-7832951cc4c5?auto=format&fit=crop&w=480&q=80" alt="Client"></div>
+          <span class="label">Client</span>
         </div>
-        <span class="label">Client</span>
       </button>
 
       <button class="profile-tile" data-profile="friend" role="listitem" aria-label="Friend">
-        <div class="thumb"><img
-            src="https://images.unsplash.com/photo-1611224923853-80b023f02d71?auto=format&fit=crop&w=480&q=80" alt="">
+        <div class="tile-inner">
+          <div class="avatar"><img src="https://images.unsplash.com/photo-1611224923853-80b023f02d71?auto=format&fit=crop&w=480&q=80" alt="Friend"></div>
+          <span class="label">Friend</span>
         </div>
-        <span class="label">Friend</span>
       </button>
 
       <button class="profile-tile" data-profile="general" role="listitem" aria-label="General">
-        <div class="thumb"><img
-            src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=480&q=80" alt="">
+        <div class="tile-inner">
+          <div class="avatar"><img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=480&q=80" alt="General"></div>
+          <span class="label">General</span>
         </div>
-        <span class="label">General</span>
       </button>
     </div>
-
 
     <button class="manage-profiles" type="button" aria-describedby="mp-note">Manage Profiles</button>
     <p id="mp-note" style="position:absolute;left:-9999px;top:auto">Opens a placeholder — wire up as needed.</p>
@@ -337,51 +166,47 @@
 
   <footer>
     <div class="social" aria-label="Social links">
-      <a href="https://www.facebook.com/iamshishiraryal" target="_blank" rel="noreferrer noopener"
-        aria-label="Facebook"><i class="fab fa-facebook"></i></a>
-      <a href="https://www.instagram.com/iamshishiraryal/" target="_blank" rel="noreferrer noopener"
-        aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-      <a href="https://twitter.com/" target="_blank" rel="noreferrer noopener" aria-label="Twitter / X"><i
-          class="fab fa-x-twitter"></i></a>
-      <a href="https://www.linkedin.com/in/shishir-aryal-006b31220/" target="_blank" rel="noreferrer noopener"
-        aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
-      <a href="https://github.com/ShishirAr" target="_blank" rel="noreferrer noopener" aria-label="GitHub"><i
-          class="fab fa-github"></i></a>
+      <a href="https://www.facebook.com/iamshishiraryal" target="_blank" rel="noreferrer noopener" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+      <a href="https://www.instagram.com/iamshishiraryal/" target="_blank" rel="noreferrer noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+      <a href="https://twitter.com/" target="_blank" rel="noreferrer noopener" aria-label="Twitter / X"><i class="fab fa-x-twitter"></i></a>
+      <a href="https://www.linkedin.com/in/shishir-aryal-006b31220/" target="_blank" rel="noreferrer noopener" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+      <a href="https://github.com/ShishirAr" target="_blank" rel="noreferrer noopener" aria-label="GitHub"><i class="fab fa-github"></i></a>
     </div>
     <p style="text-align:center;margin:0;">© <span id="y"></span> My Portfolio. All rights reserved.</p>
   </footer>
 
   <script>
-    const tiles = document.querySelectorAll('.profile-tile');
-  tiles.forEach((t, i) => {
-    // small stagger delay
-    setTimeout(() => t.classList.add('reveal'), 120 + i * 120);
-  });
-
-  // Click → save profile + go to portfolio
-  tiles.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const p = btn.dataset.profile;
-      localStorage.setItem('selectedProfile', p);
-      const url = new URL('portfolio.html', location.href);
-      url.searchParams.set('profile', p);
-      location.href = url.toString();
-    });
-  });
-
-  // Keyboard activation (Enter)
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Enter' && document.activeElement?.classList.contains('profile-tile')) {
-      document.activeElement.click();
-    }
-  });
-
-    
-    // Year
+    // Year in footer
     document.getElementById('y').textContent = new Date().getFullYear();
 
-    // Profile routing (also store to localStorage for later)
-    document.querySelectorAll('.profile').forEach(btn => {
+    const tiles = document.querySelectorAll('.profile-tile');
+
+    // Staggered reveal; set float variables BEFORE starting animation so there is no initial shift
+    tiles.forEach((tile, i) => {
+      const inner = tile.querySelector('.tile-inner');
+
+      // Random parameters
+      const amp = 5 + Math.floor(Math.random()*7);  // 5–11px amplitude
+      const dir = Math.random() < 0.5 ? 1 : -1;
+      const dur = 8 + Math.random()*3;              // 8–11s duration
+      const dly = Math.random()*1.2;                // 0–1.2s delay
+
+      // Set all positions first; current style uses --fxStart so first frame matches → no snap
+      inner.style.setProperty('--fxStart', `${-dir*amp}px`);
+      inner.style.setProperty('--fxMid',   `${ dir*amp}px`);
+      inner.style.setProperty('--fxEnd',   `${-dir*amp}px`);
+      inner.style.setProperty('--floatDur', `${dur}s`);
+      inner.style.setProperty('--floatDelay', `${dly}s`);
+
+      // Reveal tile, then start float (without jump)
+      setTimeout(() => {
+        tile.classList.add('reveal');
+        setTimeout(() => { tile.classList.add('float'); }, 200);
+      }, 140 + i*140);
+    });
+
+    // Click → save profile & go
+    tiles.forEach(btn => {
       btn.addEventListener('click', () => {
         const p = btn.dataset.profile;
         localStorage.setItem('selectedProfile', p);
@@ -391,18 +216,10 @@
       });
     });
 
-    // Allow keyboard activation
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && document.activeElement?.classList.contains('profile')) {
-        document.activeElement.click();
-      }
-    });
-
-    // Placeholder
+    // Manage Profiles placeholder
     document.querySelector('.manage-profiles').addEventListener('click', () => {
       alert('Profile management coming soon.');
     });
   </script>
 </body>
-
 </html>
