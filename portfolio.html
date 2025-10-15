@@ -18,6 +18,42 @@
             --muted: #b3b3b3;
             --white: #fff;
             --green: #1DB954;
+            --card-bg: #222;
+            --shadow: 0 10px 30px rgba(0, 0, 0, .35);
+            --radius: 10px;
+
+            --cursor-reticle: url("data:image/svg+xml;utf8,\<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'>\<circle cx='16' cy='16' r='10' fill='none' stroke='%23e50914' stroke-width='2'/>\<line x1='16' y1='2'  x2='16' y2='8'  stroke='%23ffffff' stroke-width='2'/>\<line x1='16' y1='24' x2='16' y2='30' stroke='%23ffffff' stroke-width='2'/>\<line x1='2'  y1='16' x2='8'  y2='16' stroke='%23ffffff' stroke-width='2'/>\<line x1='24' y1='16' x2='30' y2='16' stroke='%23ffffff' stroke-width='2'/>\<circle cx='16' cy='16' r='2.2' fill='%23e50914'/></svg>");
+            --cursor-reticle-active: var(--cursor-reticle);
+        }
+
+        :root {
+            --cursor-reticle-big: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='36' height='36' viewBox='0 0 32 32'><circle cx='16' cy='16' r='10' fill='none' stroke='%23e50914' stroke-width='2'/><line x1='16' y1='2' x2='16' y2='8' stroke='%23ffffff' stroke-width='2'/><line x1='16' y1='24' x2='16' y2='30' stroke='%23ffffff' stroke-width='2'/><line x1='2' y1='16' x2='8' y2='16' stroke='%23ffffff' stroke-width='2'/><line x1='24' y1='16' x2='30' y2='16' stroke='%23ffffff' stroke-width='2'/><circle cx='16' cy='16' r='2.2' fill='%23e50914'/></svg>");
+        }
+
+        a,
+        button,
+        .card {
+            cursor: var(--cursor-reticle-big) 16 16, crosshair;
+        }
+
+
+        /* Default for the whole page */
+        html,
+        body {
+            cursor: var(--cursor-reticle) 16 16, crosshair;
+        }
+
+        /* Keep text inputs usable (I-beam) */
+        input,
+        textarea {
+            cursor: text;
+        }
+
+        /* Optional: keep the reticle when hovering links/buttons/cards too */
+        a,
+        button,
+        .card {
+            cursor: var(--cursor-reticle-active) 16 16, crosshair;
         }
 
         * {
@@ -144,7 +180,6 @@
             gap: 8px;
             align-items: center;
             text-decoration: none;
-
         }
 
         .btn-primary {
@@ -175,52 +210,108 @@
             margin: 0 0 12px
         }
 
+        /* --- GRID: 5 even boxes per section, responsive --- */
         .row {
-            display: flex;
-            gap: 12px;
-            overflow-x: auto;
-            padding: 6px 0;
-            scrollbar-width: none
+            --min: 220px;
+            /* minimum card width */
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            /* 5 boxes on wide screens */
+            gap: 14px;
         }
 
-        .row::-webkit-scrollbar {
-            display: none
+        /* collapse responsively while keeping even sizes */
+        @media (max-width: 1200px) {
+            .row {
+                grid-template-columns: repeat(4, 1fr);
+            }
         }
 
+        @media (max-width: 980px) {
+            .row {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 700px) {
+            .row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 460px) {
+            .row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Card */
         .card {
-            min-width: 220px;
-            border-radius: 6px;
+            background: var(--card-bg);
+            border-radius: var(--radius);
             overflow: hidden;
             cursor: pointer;
             transform: translateZ(0);
-            transition: transform .2s
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            transition: transform .25s ease, box-shadow .25s ease, filter .25s ease;
+            /* entrance animation (staggered via inline style) */
+            opacity: 0;
+            animation: rise .6s ease both;
         }
 
         .card:hover {
-            transform: scale(1.06)
+            transform: translateY(-6px);
+            box-shadow: 0 18px 46px rgba(0, 0, 0, .45);
+            filter: brightness(1.02);
+        }
+
+        /* Consistent media area */
+        .card .media {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            /* keeps all heights equal and responsive */
+            background: #101010;
+            overflow: hidden;
         }
 
         .card img {
-            display: block;
             width: 100%;
-            height: 120px;
-            object-fit: cover
+            height: 100%;
+            object-fit: cover;
+            display: block;
         }
 
         .card .meta {
             background: var(--dark);
-            padding: 10px
+            padding: 12px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
         }
 
         .card .title {
             font-size: 1rem;
-            margin: 0 0 4px
+            margin: 0 0 6px;
         }
 
         .card .desc {
-            font-size: .85rem;
+            font-size: .9rem;
             color: var(--muted);
-            margin: 0
+            margin: 0;
+        }
+
+        @keyframes rise {
+            from {
+                transform: translateY(10px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
 
         .footer {
@@ -374,7 +465,6 @@
             text-shadow: 0 2px 8px rgba(0, 0, 0, .5);
         }
 
-        /* animation look (shine + pop-in) applied via JS class toggle */
         .title-animate {
             background: linear-gradient(90deg, #ffffff, #9ad0ff, #1DB954, #ffffff);
             background-size: 200% auto;
@@ -384,89 +474,6 @@
             animation: shine 2800ms linear infinite, popIn 600ms ease-out;
         }
 
-        @keyframes shine {
-            to {
-                background-position: -200% center;
-            }
-        }
-
-        @keyframes popIn {
-            0% {
-                transform: scale(.98);
-                opacity: .0;
-            }
-
-            100% {
-                transform: scale(1);
-                opacity: 1;
-            }
-        }
-
-        /* allow wrapping on very small screens so it doesn't overflow */
-        @media (max-width: 720px) {
-            #heroTitle {
-                white-space: normal;
-            }
-        }
-
-        /* Keep hero title scalable and on one line (wrap on small screens) */
-        #heroTitle {
-            display: inline-block;
-            white-space: nowrap;
-            font-size: clamp(2.4rem, 6.8vw, 4.8rem);
-            margin: 0 0 12px;
-            text-shadow: 0 2px 8px rgba(0, 0, 0, .5);
-        }
-
-        /* container for SVG name + tagline (so they sit on one line) */
-        #heroTitle .hero-flex {
-            display: inline-flex;
-            align-items: flex-end;
-            gap: .6rem;
-        }
-
-        /* NETFLIX-style arched name */
-        .nf-logo {
-            height: clamp(64px, 14vw, 170px);
-            width: auto;
-            display: inline-block;
-            animation: logoEnter .7s ease-out;
-        }
-
-        .nf-logo text {
-            font-family: "Bebas Neue", Impact, system-ui, sans-serif;
-            font-size: 180px;
-            /* scales via SVG viewBox */
-            letter-spacing: .06em;
-            fill: #e50914;
-            filter:
-                drop-shadow(0 6px 0 rgba(0, 0, 0, .35)) drop-shadow(0 16px 24px rgba(0, 0, 0, .75));
-        }
-
-        /* Tagline to the right of the name */
-        #heroTitle .tagline {
-            font-weight: 800;
-            font-size: clamp(1rem, 2.6vw, 1.8rem);
-            line-height: 1;
-            background: linear-gradient(90deg, #ffffff, #9ad0ff, #ffffff);
-            background-size: 200% auto;
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            animation: shine 3s linear infinite, popIn .5s ease-out;
-        }
-
-        /* re-usable title animation class (already used by your setHeroTitle logic) */
-        .title-animate {
-            animation: shine 2800ms linear infinite, popIn 600ms ease-out;
-            background: linear-gradient(90deg, #ffffff, #9ad0ff, #1DB954, #ffffff);
-            background-size: 200% auto;
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-
-        /* Animations */
         @keyframes shine {
             to {
                 background-position: -200% center;
@@ -483,6 +490,53 @@
                 transform: scale(1);
                 opacity: 1
             }
+        }
+
+        @media (max-width: 720px) {
+            #heroTitle {
+                white-space: normal;
+            }
+        }
+
+        #heroTitle {
+            display: inline-block;
+            white-space: nowrap;
+            font-size: clamp(2.4rem, 6.8vw, 4.8rem);
+            margin: 0 0 12px;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, .5);
+        }
+
+        #heroTitle .hero-flex {
+            display: inline-flex;
+            align-items: flex-end;
+            gap: .6rem;
+        }
+
+        .nf-logo {
+            height: clamp(64px, 14vw, 170px);
+            width: auto;
+            display: inline-block;
+            animation: logoEnter .7s ease-out;
+        }
+
+        .nf-logo text {
+            font-family: "Bebas Neue", Impact, system-ui, sans-serif;
+            font-size: 180px;
+            letter-spacing: .06em;
+            fill: #e50914;
+            filter: drop-shadow(0 6px 0 rgba(0, 0, 0, .35)) drop-shadow(0 16px 24px rgba(0, 0, 0, .75));
+        }
+
+        #heroTitle .tagline {
+            font-weight: 800;
+            font-size: clamp(1rem, 2.6vw, 1.8rem);
+            line-height: 1;
+            background: linear-gradient(90deg, #ffffff, #9ad0ff, #ffffff);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: shine 3s linear infinite, popIn .5s ease-out;
         }
 
         @keyframes logoEnter {
@@ -497,48 +551,10 @@
             }
         }
 
-        /* Phone tweaks */
-        @media (max-width: 640px) {
-            #heroTitle {
-                white-space: normal;
-            }
-
-            #heroTitle .hero-flex {
-                flex-wrap: wrap;
-                justify-content: center;
-                gap: .4rem;
-            }
-
-            .navbar {
-                padding: 12px 16px;
-            }
-
-            .nav-links {
-                gap: 12px;
-                flex-wrap: wrap;
-                font-size: .9rem;
-            }
-
-            .hero {
-                min-height: 70vh;
-                padding: 0 16px;
-            }
-
-            .card {
-                min-width: 180px;
-            }
-
-            .card img {
-                height: 110px;
-            }
-        }
-
-        /* Let tall SVG show fully */
         .navbar {
             overflow: visible;
         }
 
-        /* Netflix-style brand that ALWAYS fits */
         .nf-brand {
             display: inline-flex;
             align-items: flex-end;
@@ -548,10 +564,8 @@
 
         .nf-brand-svg {
             width: clamp(140px, 20vw, 240px);
-            /* responsive but capped */
             height: auto;
             overflow: visible;
-            /* prevent clipping inside SVG */
             filter: drop-shadow(0 2px 0 rgba(0, 0, 0, .35)) drop-shadow(0 6px 16px rgba(0, 0, 0, .55));
             transform-origin: left center;
             transition: transform .2s ease;
@@ -560,27 +574,77 @@
         .nf-brand-svg text {
             font-family: "Bebas Neue", Impact, system-ui, sans-serif;
             font-size: 120px;
-            /* sized to fit the 220px viewBox */
             letter-spacing: .06em;
             fill: #e50914;
-            /* Netflix red */
         }
 
         .nf-brand:hover .nf-brand-svg {
             transform: translateY(-1px) scale(1.02);
         }
 
-        /* Keep old .logo link styles from interfering */
         .logo {
             color: inherit;
             text-decoration: none;
         }
 
-        /* Small phones */
         @media (max-width: 640px) {
             .nf-brand-svg {
                 width: clamp(120px, 28vw, 200px);
             }
+        }
+
+        /* Enable stacking so the hovered card can rise above neighbors */
+        .row {
+            position: relative;
+            isolation: isolate;
+        }
+
+        /* Smooth transform + shadow transitions */
+        .card {
+            transform: translateZ(0) scale(1);
+            transform-origin: center;
+            transition:
+                transform 220ms cubic-bezier(.2, .8, .2, 1),
+                box-shadow 220ms cubic-bezier(.2, .8, .2, 1),
+                filter 180ms ease;
+            will-change: transform, box-shadow, filter;
+            z-index: 0;
+        }
+
+        /* Netflix-like grow */
+        @media (hover:hover) and (pointer:fine) {
+
+            .card:hover,
+            .card:focus-visible {
+                transform: scale(1.12);
+                z-index: 3;
+                box-shadow: 0 22px 60px rgba(0, 0, 0, .55);
+            }
+
+            /* Dim and slightly shrink non-hovered siblings */
+            .row:has(.card:hover) .card:not(:hover) {
+                filter: brightness(.82) saturate(.95);
+                transform: scale(.98);
+            }
+        }
+
+        /* Accessibility: reduce motion users keep subtle effect */
+        @media (prefers-reduced-motion: reduce) {
+            .card {
+                transition: none;
+            }
+        }
+
+        /* Fallback when :has() isn't available */
+        .row.row-hovering .card:not(.is-hovered) {
+            filter: brightness(.82) saturate(.95);
+            transform: scale(.98);
+        }
+
+        .row.row-hovering .card.is-hovered {
+            transform: scale(1.12);
+            z-index: 3;
+            box-shadow: 0 22px 60px rgba(0, 0, 0, .55);
         }
     </style>
 </head>
@@ -600,7 +664,6 @@
             <svg class="nf-brand-svg" viewBox="0 0 1000 220" preserveAspectRatio="xMidYMid meet" role="img"
                 aria-hidden="true">
                 <defs>
-                    <!-- Lower arc so letters sit well inside the box -->
                     <path id="brand-arc" d="M20,160 C320,60 680,60 980,160" />
                 </defs>
                 <text text-anchor="middle">
@@ -608,7 +671,6 @@
                 </text>
             </svg>
         </a>
-
 
         <div class="nav-links" role="navigation" aria-label="Primary">
             <a href="#projects">Projects</a>
@@ -635,11 +697,10 @@
                         <i class="fa-brands fa-linkedin"></i> Linked-In
                     </a>
                 </div>
-
             </div>
         </section>
 
-        <!-- Rows -->
+        <!-- Sections -->
         <section class="section" id="projects" aria-label="Projects">
             <h3>Featured Projects</h3>
             <div class="row" data-row="projects"></div>
@@ -703,6 +764,23 @@
     </div>
 
     <script>
+        (function () {
+            const rows = document.querySelectorAll('.row');
+            rows.forEach(row => {
+                row.addEventListener('mouseover', e => {
+                    const card = e.target.closest('.card');
+                    if (!card) return;
+                    row.classList.add('row-hovering');
+                    card.classList.add('is-hovered');
+                });
+                row.addEventListener('mouseout', e => {
+                    const card = e.target.closest('.card');
+                    if (!card) return;
+                    row.classList.remove('row-hovering');
+                    card.classList.remove('is-hovered');
+                });
+            });
+        })();
         /* ---------------- Data ---------------- */
         const data = {
             projects: [
@@ -730,7 +808,6 @@
             ]
         };
 
-
         /* ---------- Helpers ---------- */
         const $ = (sel, root = document) => root.querySelector(sel);
         const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
@@ -753,10 +830,8 @@
 
         function setHeroTitle(text) {
             const el = document.getElementById('heroTitle');
-            // restart CSS animation
             el.classList.remove('title-animate');
-            // force reflow so animation restarts reliably
-            void el.offsetWidth;
+            void el.offsetWidth; // restart CSS animation
             el.textContent = text;
             el.classList.add('title-animate');
         }
@@ -769,7 +844,6 @@
             const profile = (fromURL || fromLS || 'general').toLowerCase();
             if (fromURL) localStorage.setItem('selectedProfile', profile);
 
-            const title = $('#heroTitle');
             const desc = $('#heroDesc');
             const tweaks = {
                 recruiter: {
@@ -794,28 +868,39 @@
             desc.textContent = tweaks.d;
         })();
 
-        // Populate rows
-        function makeCard(item, type) {
+        // Build a single card
+        function makeCard(item, type, idx) {
             const el = document.createElement('article');
             el.className = 'card';
+            el.style.animationDelay = `${idx * 80}ms`; // stagger entrance
             el.setAttribute('tabindex', '0');
             el.innerHTML = `
-        <img loading="lazy" src="${item.image}" alt="${item.title}">
-        <div class="meta">
-          <h4 class="title">${item.title}</h4>
-          <p class="desc">${(item.description || '').slice(0, 72)}${item.description.length > 72 ? '…' : ''}</p>
-        </div>
-      `;
+                <div class="media">
+                    <img loading="lazy" src="${item.image}" alt="${item.title}">
+                </div>
+                <div class="meta">
+                    <h4 class="title">${item.title}</h4>
+                    <p class="desc">${(item.description || '').slice(0, 80)}${(item.description && item.description.length > 80) ? '…' : ''}</p>
+                </div>
+            `;
             el.addEventListener('click', () => openModal(item, type));
             el.addEventListener('keypress', (e) => { if (e.key === 'Enter') el.click(); });
             return el;
         }
 
+        // Ensure exactly 5 cards per section; fill with "Coming Soon" placeholders if needed
+        const placeholder = (i) => ({
+            id: `ph-${i}`, title: "Coming Soon", description: "New item will appear here.",
+            image: "https://images.unsplash.com/photo-1522199710521-72d69614c702?auto=format&fit=crop&w=800&q=60"
+        });
+
         function populate() {
             for (const key of ['projects', 'education', 'skills', 'experience']) {
                 const row = document.querySelector(`.row[data-row="${key}"]`);
                 row.innerHTML = '';
-                data[key].forEach(item => row.appendChild(makeCard(item, key)));
+                const items = data[key].slice(0, 5);             // take up to 5
+                while (items.length < 5) items.push(placeholder(items.length + 1)); // pad to 5
+                items.forEach((item, i) => row.appendChild(makeCard(item, key, i)));
             }
         }
         populate();
@@ -824,6 +909,7 @@
         const modal = $('#modal'), mHeader = $('#mHeader'), mTitle = $('#mTitle'),
             mPoster = $('#mPoster'), mDesc = $('#mDesc'), mFeatures = $('#mFeatures'),
             mClose = $('#mClose'), viewBtn = $('#viewBtn');
+
         function addFeature(label, value) {
             const f = document.createElement('div');
             f.className = 'feature';
@@ -836,38 +922,35 @@
             mPoster.src = item.image; mPoster.alt = item.title;
             mDesc.textContent = item.description || '';
             mFeatures.innerHTML = '';
+
             if (type === 'projects') {
-                addFeature('Category', item.category);
-                addFeature('Tech', (item.technologies || []).join(', '));
-                addFeature('Year', item.year);
-                addFeature('Status', item.status);
+                addFeature('Category', item.category || '—');
+                addFeature('Tech', (item.technologies || []).join(', ') || '—');
+                addFeature('Year', item.year || '—');
+                addFeature('Status', item.status || '—');
                 viewBtn.href = item.url || '#';
             } else if (type === 'education') {
-                addFeature('Institution', item.institution);
-                addFeature('Year', item.year);
+                addFeature('Institution', item.institution || '—');
+                addFeature('Year', item.year || '—');
                 if (item.gpa) addFeature('GPA', item.gpa);
                 if (item.duration) addFeature('Duration', item.duration);
                 if (item.credential) addFeature('Credential', item.credential);
                 viewBtn.href = '#';
             } else if (type === 'skills') {
-                addFeature('Tech', (item.technologies || []).join(', '));
+                addFeature('Tech', (item.technologies || []).join(', ') || '—');
                 viewBtn.href = '#';
             } else if (type === 'experience') {
-                addFeature('Company', item.company);
-                addFeature('Period', item.period);
+                addFeature('Company', item.company || '—');
+                addFeature('Period', item.period || '—');
                 if (item.responsibilities) addFeature('Responsibilities', item.responsibilities.join(', '));
                 viewBtn.href = '#';
             }
+
             modal.style.display = 'block';
             document.body.style.overflow = 'hidden';
         }
         mClose.addEventListener('click', () => { modal.style.display = 'none'; document.body.style.overflow = ''; });
         window.addEventListener('click', (e) => { if (e.target === modal) { mClose.click(); } });
-
-        // Buttons
-        $('#playBtn').addEventListener('click', () => document.querySelector('#projects').scrollIntoView({ behavior: 'smooth' }));
-        $('#moreBtn').addEventListener('click', () => document.querySelector('#education').scrollIntoView({ behavior: 'smooth' }));
-
     </script>
 </body>
 
