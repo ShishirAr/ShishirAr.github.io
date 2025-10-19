@@ -1,296 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Who’s Viewing? · Portfolio</title>
 
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <meta name="color-scheme" content="dark">
 
-  <style>
-    /* ===== Reticle / "aim gun" cursor across the whole site ===== */
-
-    /* SVG cursor (32x32). Hotspot is dead center (16,16). */
-    :root {
-      --cursor-reticle: url("data:image/svg+xml;utf8,\<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'>\ <circle cx='16' cy='16' r='10' fill='none' stroke='%23e50914' stroke-width='2'/>\<line x1='16' y1='2'  x2='16' y2='8'  stroke='%23ffffff' stroke-width='2'/>\<line x1='16' y1='24' x2='16' y2='30' stroke='%23ffffff' stroke-width='2'/>\<line x1='2'  y1='16' x2='8'  y2='16' stroke='%23ffffff' stroke-width='2'/>\<line x1='24' y1='16' x2='30' y2='16' stroke='%23ffffff' stroke-width='2'/>\<circle cx='16' cy='16' r='2.2' fill='%23e50914'/></svg>");
-      --cursor-reticle-active: var(--cursor-reticle);
-    }
-
-    :root {
-      --cursor-reticle-big: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='36' height='36' viewBox='0 0 32 32'><circle cx='16' cy='16' r='10' fill='none' stroke='%23e50914' stroke-width='2'/><line x1='16' y1='2' x2='16' y2='8' stroke='%23ffffff' stroke-width='2'/><line x1='16' y1='24' x2='16' y2='30' stroke='%23ffffff' stroke-width='2'/><line x1='2' y1='16' x2='8' y2='16' stroke='%23ffffff' stroke-width='2'/><line x1='24' y1='16' x2='30' y2='16' stroke='%23ffffff' stroke-width='2'/><circle cx='16' cy='16' r='2.2' fill='%23e50914'/></svg>");
-    }
-
-    a,
-    button,
-    .card {
-      cursor: var(--cursor-reticle-big) 16 16, crosshair;
-    }
-
-    /* Default for the whole page */
-    html,
-    body {
-      cursor: var(--cursor-reticle) 16 16, crosshair;
-    }
-
-    /* Keep text inputs usable (I-beam) */
-    input,
-    textarea {
-      cursor: text;
-    }
-
-    /* Optional: keep the reticle when hovering links/buttons/cards too */
-    a,
-    button,
-    .card {
-      cursor: var(--cursor-reticle-active) 16 16, crosshair;
-    }
-
-    :root {
-      --red: #e50914;
-      --black: #141414;
-      --dark: #2f2f2f;
-      --muted: #b3b3b3;
-      --white: #fff;
-    }
-
-    * {
-      box-sizing: border-box
-    }
-
-    html,
-    body {
-      height: 100%
-    }
-
-    body {
-      margin: 0;
-      background: #000;
-      color: var(--white);
-      font: 16px/1.5 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-
-    /* Navbar */
-    .navbar {
-      position: fixed;
-      inset: 0 auto auto 0;
-      width: 100%;
-      z-index: 10;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 16px 24px;
-      background: linear-gradient(to bottom, rgba(0, 0, 0, .75), transparent)
-    }
-
-    .logo {
-      color: var(--red);
-      font-weight: 800;
-      letter-spacing: .5px;
-      text-decoration: none
-    }
-
-    /* Main */
-    .profile-selection {
-      margin-top: 72px;
-      flex: 1;
-      display: grid;
-      place-items: center;
-      padding: 32px 16px;
-      text-align: center
-    }
-
-    .profile-title {
-      font-size: clamp(2rem, 5vw, 3.5rem);
-      margin-bottom: 28px
-    }
-
-    /* Grid like Netflix */
-    .profiles {
-      display: grid;
-      grid-template-columns: repeat(5, minmax(120px, 1fr));
-      gap: 34px;
-      justify-items: center;
-      max-width: 1200px;
-      margin: 8px auto 56px;
-    }
-
-    /* Picture + name only (no outer box) */
-    .profile-tile {
-      background: transparent;
-      border: 0;
-      padding: 0;
-      margin: 0;
-      cursor: pointer;
-      outline: none;
-      display: block;
-      opacity: 0;
-      transform: translate3d(0, 10px, 0);
-      transition: opacity .45s ease, transform .5s cubic-bezier(.22, .61, .36, 1);
-      will-change: transform, opacity;
-    }
-
-    .profile-tile.reveal {
-      opacity: 1;
-      transform: translate3d(0, 0, 0)
-    }
-
-    /* Inner wrapper floats; its initial transform matches the first keyframe (no snap) */
-    .tile-inner {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
-      transform: translate3d(var(--fxStart, 0px), 0, 0);
-      /* 👈 start position */
-      will-change: transform;
-    }
-
-    .avatar {
-      width: clamp(120px, 15vw, 180px);
-      aspect-ratio: 1/1;
-      border-radius: 12px;
-      overflow: hidden;
-      position: relative;
-      box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
-      transition: box-shadow .25s ease, transform .28s ease;
-      transform: translate3d(0, 0, 0) scale(1);
-    }
-
-    .avatar img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-      pointer-events: none;
-      transform: translate3d(0, 0, 0) scale(1);
-      transition: transform .28s ease;
-    }
-
-    /* Hover/focus: subtle lift + ring */
-    .profile-tile:hover .avatar,
-    .profile-tile:focus-visible .avatar {
-      box-shadow: 0 0 0 3px #fff;
-      transform: translate3d(0, -2px, 0) scale(1.02);
-    }
-
-    .profile-tile:hover .avatar img,
-    .profile-tile:focus-visible .avatar img {
-      transform: translate3d(0, 0, 0) scale(1.06);
-    }
-
-    .label {
-      color: #cfcfcf;
-      font-size: 1.05rem;
-      letter-spacing: .2px;
-      text-shadow: 0 1px 0 rgba(0, 0, 0, .6);
-    }
-
-    .profile-tile:hover .label,
-    .profile-tile:focus-visible .label {
-      color: #fff
-    }
-
-    /* Ultra-smooth float: start → mid → end; first frame uses --fxStart so there is zero jump */
-    @keyframes floatXY {
-      0% {
-        transform: translate3d(var(--fxStart, 0px), 0, 0)
-      }
-
-      50% {
-        transform: translate3d(var(--fxMid, 6px), -3px, 0)
-      }
-
-      100% {
-        transform: translate3d(var(--fxEnd, -0px), 0, 0)
-      }
-    }
-
-    .float .tile-inner {
-      animation: floatXY var(--floatDur, 8s) cubic-bezier(.42, 0, .58, 1) var(--floatDelay, .2s) infinite;
-    }
-
-    /* Pause float for crisp hover control */
-    .profile-tile:hover .tile-inner,
-    .profile-tile:focus-visible .tile-inner {
-      animation-play-state: paused
-    }
-
-    /* Manage + footer */
-    .manage-profiles {
-      padding: 10px 20px;
-      border: 1px solid var(--muted);
-      background: transparent;
-      color: var(--muted);
-      border-radius: 4px;
-      cursor: pointer
-    }
-
-    .manage-profiles:hover {
-      border-color: var(--white);
-      color: var(--white)
-    }
-
-    footer {
-      border-top: 1px solid var(--dark);
-      color: var(--muted);
-      padding: 24px
-    }
-
-    .social {
-      display: flex;
-      gap: 16px;
-      justify-content: center;
-      margin-bottom: 12px
-    }
-
-    .social a {
-      color: var(--muted);
-      font-size: 1.3rem
-    }
-
-    .social a:hover {
-      color: var(--white)
-    }
-
-    /* Responsive breakpoints */
-    @media (max-width:1100px) {
-      .profiles {
-        grid-template-columns: repeat(4, minmax(120px, 1fr))
-      }
-    }
-
-    @media (max-width:820px) {
-      .profiles {
-        grid-template-columns: repeat(3, minmax(120px, 1fr))
-      }
-    }
-
-    @media (max-width:560px) {
-      .profiles {
-        grid-template-columns: repeat(2, minmax(120px, 1fr));
-        gap: 26px
-      }
-    }
-
-    @media (prefers-reduced-motion:reduce) {
-      * {
-        animation: none !important;
-        transition: none !important
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="css/index.css">
 </head>
-
 <body>
   <nav class="navbar" aria-label="Top">
-    <a class="logo" href="#">PORTFOLIO</a>
+    <a class="logo" href="index.html">PORTFOLIO</a>
   </nav>
 
   <main class="profile-selection">
@@ -299,103 +22,60 @@
     <div class="profiles" role="list">
       <button class="profile-tile" data-profile="recruiter" role="listitem" aria-label="Recruiter">
         <div class="tile-inner">
-          <div class="avatar"><img
+          <div class="avatar">
+            <img loading="eager" fetchpriority="high"
               src="https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=480&q=80"
-              alt="Recruiter"></div>
+              width="480" height="480" alt="Recruiter">
+          </div>
           <span class="label">Recruiter</span>
         </div>
       </button>
 
       <button class="profile-tile" data-profile="client" role="listitem" aria-label="Client">
         <div class="tile-inner">
-          <div class="avatar"><img
+          <div class="avatar">
+            <img loading="lazy" decoding="async"
               src="https://images.unsplash.com/photo-1568602471122-7832951cc4c5?auto=format&fit=crop&w=480&q=80"
-              alt="Client"></div>
+              width="480" height="480" alt="Client">
+          </div>
           <span class="label">Client</span>
         </div>
       </button>
 
       <button class="profile-tile" data-profile="friend" role="listitem" aria-label="Friend">
         <div class="tile-inner">
-          <div class="avatar"><img src="friends.jpg" alt="Friend"></div>
+          <div class="avatar">
+            <img loading="lazy" decoding="async" src="friends.jpg" width="800" height="800" alt="Friend">
+          </div>
           <span class="label">Friend</span>
         </div>
       </button>
 
-      <button class="profile-tile" data-profile="general" role="listitem" aria-label="General">
+      <button class="profile-tile" data-profile="general" role="listitem" aria-label="Girlfriend">
         <div class="tile-inner">
-          <div class="avatar"><img src="gf.jpg" alt="General"></div>
-          <span class="label">Girlfriend</span>
+          <div class="avatar">
+            <img loading="lazy" decoding="async" src="gf.jpg" width="800" height="800" alt="Girlfriend">
+          </div>
+          <span class="label">Who?</span>
         </div>
       </button>
     </div>
 
     <button class="manage-profiles" type="button" aria-describedby="mp-note">Manage Profiles</button>
-    <p id="mp-note" style="position:absolute;left:-9999px;top:auto">Opens a placeholder — wire up as needed.</p>
+    <p id="mp-note" class="sr-only">Opens a placeholder — wire up as needed.</p>
   </main>
 
   <footer>
     <div class="social" aria-label="Social links">
-      <a href="https://www.facebook.com/iamshishiraryal" target="_blank" rel="noreferrer noopener"
-        aria-label="Facebook"><i class="fab fa-facebook"></i></a>
-      <a href="https://www.instagram.com/iamshishiraryal/" target="_blank" rel="noreferrer noopener"
-        aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-      <a href="https://twitter.com/" target="_blank" rel="noreferrer noopener" aria-label="Twitter / X"><i
-          class="fab fa-x-twitter"></i></a>
-      <a href="https://www.linkedin.com/in/shishir-aryal-006b31220/" target="_blank" rel="noreferrer noopener"
-        aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
-      <a href="https://github.com/ShishirAr" target="_blank" rel="noreferrer noopener" aria-label="GitHub"><i
-          class="fab fa-github"></i></a>
+      <a href="https://www.facebook.com/iamshishiraryal" target="_blank" rel="noreferrer noopener" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+      <a href="https://www.instagram.com/iamshishiraryal/" target="_blank" rel="noreferrer noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+      <a href="https://twitter.com/" target="_blank" rel="noreferrer noopener" aria-label="Twitter / X"><i class="fab fa-x-twitter"></i></a>
+      <a href="https://www.linkedin.com/in/shishir-aryal-006b31220/" target="_blank" rel="noreferrer noopener" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+      <a href="https://github.com/ShishirAr" target="_blank" rel="noreferrer noopener" aria-label="GitHub"><i class="fab fa-github"></i></a>
     </div>
     <p style="text-align:center;margin:0;">© <span id="y"></span> My Portfolio. All rights reserved.</p>
   </footer>
 
-  <script>
-    // Year in footer
-    document.getElementById('y').textContent = new Date().getFullYear();
-
-    const tiles = document.querySelectorAll('.profile-tile');
-
-    // Staggered reveal; set float variables BEFORE starting animation so there is no initial shift
-    tiles.forEach((tile, i) => {
-      const inner = tile.querySelector('.tile-inner');
-
-      // Random parameters
-      const amp = 5 + Math.floor(Math.random() * 7);  // 5–11px amplitude
-      const dir = Math.random() < 0.5 ? 1 : -1;
-      const dur = 8 + Math.random() * 3;              // 8–11s duration
-      const dly = Math.random() * 1.2;                // 0–1.2s delay
-
-      // Set all positions first; current style uses --fxStart so first frame matches → no snap
-      inner.style.setProperty('--fxStart', `${-dir * amp}px`);
-      inner.style.setProperty('--fxMid', `${dir * amp}px`);
-      inner.style.setProperty('--fxEnd', `${-dir * amp}px`);
-      inner.style.setProperty('--floatDur', `${dur}s`);
-      inner.style.setProperty('--floatDelay', `${dly}s`);
-
-      // Reveal tile, then start float (without jump)
-      setTimeout(() => {
-        tile.classList.add('reveal');
-        setTimeout(() => { tile.classList.add('float'); }, 200);
-      }, 140 + i * 140);
-    });
-
-    // Click → save profile & go
-    tiles.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const p = btn.dataset.profile;
-        localStorage.setItem('selectedProfile', p);
-        const url = new URL('portfolio.html', location.href);
-        url.searchParams.set('profile', p);
-        location.href = url.toString();
-      });
-    });
-
-    // Manage Profiles placeholder
-    document.querySelector('.manage-profiles').addEventListener('click', () => {
-      alert('Profile management coming soon.');
-    });
-  </script>
+  <script src="js/index.js" defer></script>
 </body>
-
 </html>
