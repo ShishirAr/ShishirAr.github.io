@@ -20,7 +20,7 @@
 const data = {
   projects: [
     { id: 1, title: "Klopchik-AI", description: "KlopchikAI is a custom AI that understands and answers questions based on user-provided context. It uses advanced language models and runs on Cloudflare Workers to deliver fast, smart, and personalized responses directly in your web app.", image: "klop.png", category: "Web", technologies: ["Python", "JavaScript", "HTML", "CSS", "Cloudfare"], year: "2025", status: "Completed", url: "https://chat.klopchik.cc" },
-    { id: 2, title: "Fixie-Pixie", description: "An AI-powered system that detects potholes and automatically alerts authorities for quick road repairs.", image: "fixie.png", category: "Mobile", technologies: ["JS", "Python","React","YOLO"], year: "2025", status: "Completed", url: "#" },
+    { id: 2, title: "Fixie-Pixie", description: "An AI-powered system that detects potholes and automatically alerts authorities for quick road repairs.", image: "fixie.png", category: "Mobile", technologies: ["JS", "Python","React","YOLO"], year: "2025", status: "Completed", url: "https://github.com/ShishirAr/FixiePixie" },
     { id: 3, title: "SkyVision", description: "SkyVision — an AI-powered system that analyzes drone footage to detect and identify objects, people, and landmarks in real time.Coming soon", image: "skyvision.png", category: "Web", technologies: ["JS", "REST APIs", "CSS"], year: "2022", status: "Soon", url: "#" },
     { id: 4, title: "Chatbot+Portofilio", description: "Responsive showcase of projects and skills.", image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80", category: "Web", technologies: ["HTML", "CSS", "JavaScript"], year: "2021", status: "Soon", url: "#" },
   ],
