@@ -1,957 +1,124 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue:wght@400..700&display=swap" rel="stylesheet">
-
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Shishir Aryal · Portfolio</title>
-    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <meta name="color-scheme" content="dark">
-    <style>
-        :root {
-            --red: #e50914;
-            --black: #141414;
-            --dark: #2f2f2f;
-            --muted: #b3b3b3;
-            --white: #fff;
-            --green: #1DB954;
-            --card-bg: #222;
-            --shadow: 0 10px 30px rgba(0, 0, 0, .35);
-            --radius: 10px;
-
-            --cursor-reticle: url("data:image/svg+xml;utf8,\<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'>\<circle cx='16' cy='16' r='10' fill='none' stroke='%23e50914' stroke-width='2'/>\<line x1='16' y1='2'  x2='16' y2='8'  stroke='%23ffffff' stroke-width='2'/>\<line x1='16' y1='24' x2='16' y2='30' stroke='%23ffffff' stroke-width='2'/>\<line x1='2'  y1='16' x2='8'  y2='16' stroke='%23ffffff' stroke-width='2'/>\<line x1='24' y1='16' x2='30' y2='16' stroke='%23ffffff' stroke-width='2'/>\<circle cx='16' cy='16' r='2.2' fill='%23e50914'/></svg>");
-            --cursor-reticle-active: var(--cursor-reticle);
-        }
-
-        :root {
-            --cursor-reticle-big: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='36' height='36' viewBox='0 0 32 32'><circle cx='16' cy='16' r='10' fill='none' stroke='%23e50914' stroke-width='2'/><line x1='16' y1='2' x2='16' y2='8' stroke='%23ffffff' stroke-width='2'/><line x1='16' y1='24' x2='16' y2='30' stroke='%23ffffff' stroke-width='2'/><line x1='2' y1='16' x2='8' y2='16' stroke='%23ffffff' stroke-width='2'/><line x1='24' y1='16' x2='30' y2='16' stroke='%23ffffff' stroke-width='2'/><circle cx='16' cy='16' r='2.2' fill='%23e50914'/></svg>");
-        }
-
-        a,
-        button,
-        .card {
-            cursor: var(--cursor-reticle-big) 16 16, crosshair;
-        }
-
-
-        /* Default for the whole page */
-        html,
-        body {
-            cursor: var(--cursor-reticle) 16 16, crosshair;
-        }
-
-        /* Keep text inputs usable (I-beam) */
-        input,
-        textarea {
-            cursor: text;
-        }
-
-        /* Optional: keep the reticle when hovering links/buttons/cards too */
-        a,
-        button,
-        .card {
-            cursor: var(--cursor-reticle-active) 16 16, crosshair;
-        }
-
-        * {
-            box-sizing: border-box
-        }
-
-        html,
-        body {
-            height: 100%
-        }
-
-        body {
-            margin: 0;
-            background: var(--black);
-            color: var(--white);
-            font: 16px/1.6 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-            overflow-x: hidden
-        }
-
-        .video-bg {
-            position: fixed;
-            inset: 0;
-            z-index: -1;
-            overflow: hidden
-        }
-
-        .video-bg video {
-            min-width: 100%;
-            min-height: 100%;
-            width: auto;
-            height: auto;
-            position: absolute;
-            inset: 50% auto auto 50%;
-            transform: translate(-50%, -50%);
-            object-fit: cover;
-            opacity: .3
-        }
-
-        .video-overlay {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(to bottom, rgba(0, 0, 0, .7), rgba(0, 0, 0, .3) 50%, rgba(0, 0, 0, .7))
-        }
-
-        .navbar {
-            position: fixed;
-            inset: 0 auto auto 0;
-            width: 100%;
-            z-index: 5;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 16px 24px;
-            background: linear-gradient(to bottom, rgba(0, 0, 0, .7) 12%, transparent);
-            transition: background-color .25s
-        }
-
-        .navbar.scrolled {
-            background: var(--black)
-        }
-
-        .logo {
-            color: var(--red);
-            font-weight: 800;
-            text-decoration: none;
-            letter-spacing: .5px
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 18px
-        }
-
-        .nav-links a {
-            color: var(--white);
-            text-decoration: none;
-            font-size: .95rem
-        }
-
-        .nav-links a:hover {
-            color: var(--muted)
-        }
-
-        main {
-            position: relative
-        }
-
-        .hero {
-            min-height: 76vh;
-            display: grid;
-            place-items: center;
-            padding: 0 24px
-        }
-
-        .hero .inner {
-            max-width: 720px
-        }
-
-        .hero h1 {
-            font-size: clamp(2rem, 6vw, 3.4rem);
-            margin: 0 0 10px;
-            text-shadow: 0 2px 8px rgba(0, 0, 0, .5)
-        }
-
-        .hero p {
-            margin: 0 0 18px;
-            color: #e5e5e5;
-            text-shadow: 0 1px 3px rgba(0, 0, 0, .45)
-        }
-
-        .btns {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap
-        }
-
-        .btn {
-            padding: 10px 20px;
-            border: 0;
-            border-radius: 6px;
-            font-weight: 700;
-            cursor: pointer;
-            display: inline-flex;
-            gap: 8px;
-            align-items: center;
-            text-decoration: none;
-        }
-
-        .btn-primary {
-            background: var(--white);
-            color: #000
-        }
-
-        .btn-primary:hover {
-            opacity: .85
-        }
-
-        .btn-secondary {
-            background: rgba(109, 109, 110, .7);
-            color: var(--white)
-        }
-
-        .btn-secondary:hover {
-            background: rgba(109, 109, 110, .5)
-        }
-
-        .section {
-            background: rgba(20, 20, 20, .85);
-            padding: 36px 24px
-        }
-
-        .section h3 {
-            font-size: 1.4rem;
-            margin: 0 0 12px
-        }
-
-        /* --- GRID: 5 even boxes per section, responsive --- */
-        .row {
-            --min: 220px;
-            /* minimum card width */
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            /* 5 boxes on wide screens */
-            gap: 14px;
-        }
-
-        /* collapse responsively while keeping even sizes */
-        @media (max-width: 1200px) {
-            .row {
-                grid-template-columns: repeat(4, 1fr);
-            }
-        }
-
-        @media (max-width: 980px) {
-            .row {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-
-        @media (max-width: 700px) {
-            .row {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        @media (max-width: 460px) {
-            .row {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* Card */
-        .card {
-            background: var(--card-bg);
-            border-radius: var(--radius);
-            overflow: hidden;
-            cursor: pointer;
-            transform: translateZ(0);
-            box-shadow: var(--shadow);
-            display: flex;
-            flex-direction: column;
-            transition: transform .25s ease, box-shadow .25s ease, filter .25s ease;
-            /* entrance animation (staggered via inline style) */
-            opacity: 0;
-            animation: rise .6s ease both;
-        }
-
-        .card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 18px 46px rgba(0, 0, 0, .45);
-            filter: brightness(1.02);
-        }
-
-        /* Consistent media area */
-        .card .media {
-            width: 100%;
-            aspect-ratio: 16 / 9;
-            /* keeps all heights equal and responsive */
-            background: #101010;
-            overflow: hidden;
-        }
-
-        .card img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-
-        .card .meta {
-            background: var(--dark);
-            padding: 12px;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .card .title {
-            font-size: 1rem;
-            margin: 0 0 6px;
-        }
-
-        .card .desc {
-            font-size: .9rem;
-            color: var(--muted);
-            margin: 0;
-        }
-
-        @keyframes rise {
-            from {
-                transform: translateY(10px);
-                opacity: 0;
-            }
-
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        .footer {
-            border-top: 1px solid var(--dark);
-            color: var(--muted);
-            text-align: center;
-            padding: 36px 24px;
-            background: rgba(20, 20, 20, .9)
-        }
-
-        .social {
-            display: flex;
-            gap: 16px;
-            justify-content: center;
-            margin-bottom: 12px
-        }
-
-        .social a {
-            color: var(--muted);
-            font-size: 1.3rem
-        }
-
-        .social a:hover {
-            color: var(--white)
-        }
-
-        /* modal */
-        .modal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, .85);
-            z-index: 20;
-            overflow: auto
-        }
-
-        .modal-content {
-            background: var(--black);
-            margin: 50px auto;
-            max-width: 900px;
-            border-radius: 10px;
-            overflow: hidden;
-            position: relative
-        }
-
-        .modal-close {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            background: none;
-            border: 0;
-            color: var(--white);
-            font-size: 1.8rem;
-            cursor: pointer
-        }
-
-        .modal-header {
-            height: 380px;
-            background-size: cover;
-            background-position: center;
-            position: relative
-        }
-
-        .modal-header::after {
-            content: "";
-            position: absolute;
-            inset: auto 0 0 0;
-            height: 140px;
-            background: linear-gradient(to top, var(--black), transparent)
-        }
-
-        .modal-body {
-            padding: 24px;
-            margin-top: -90px;
-            position: relative;
-            z-index: 1
-        }
-
-        .modal-title {
-            font-size: 2rem;
-            margin: 0 0 12px
-        }
-
-        .details {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap
-        }
-
-        .poster {
-            width: 200px;
-            height: 300px;
-            border-radius: 8px;
-            overflow: hidden;
-            flex: 0 0 auto
-        }
-
-        .poster img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover
-        }
-
-        .info {
-            flex: 1;
-            min-width: 260px
-        }
-
-        .features {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin-top: 12px
-        }
-
-        .feature {
-            display: flex;
-            gap: 8px
-        }
-
-        .label {
-            color: var(--muted);
-            min-width: 100px
-        }
-
-        @media (max-width:768px) {
-            .hero {
-                min-height: 68vh
-            }
-
-            .poster {
-                width: 160px;
-                height: 240px;
-                margin: 0 auto
-            }
-        }
-
-        @media (prefers-reduced-motion:reduce) {
-            * {
-                animation: none !important;
-                transition: none !important
-            }
-        }
-
-        /* Keep hero title on one line (wrap on small screens) */
-        #heroTitle {
-            white-space: nowrap;
-            display: inline-block;
-            font-size: clamp(2.2rem, 6vw, 4.2rem);
-            margin: 0 0 10px;
-            text-shadow: 0 2px 8px rgba(0, 0, 0, .5);
-        }
-
-        .title-animate {
-            background: linear-gradient(90deg, #ffffff, #9ad0ff, #1DB954, #ffffff);
-            background-size: 200% auto;
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            animation: shine 2800ms linear infinite, popIn 600ms ease-out;
-        }
-
-        @keyframes shine {
-            to {
-                background-position: -200% center;
-            }
-        }
-
-        @keyframes popIn {
-            0% {
-                transform: scale(.98);
-                opacity: 0
-            }
-
-            100% {
-                transform: scale(1);
-                opacity: 1
-            }
-        }
-
-        @media (max-width: 720px) {
-            #heroTitle {
-                white-space: normal;
-            }
-        }
-
-        #heroTitle {
-            display: inline-block;
-            white-space: nowrap;
-            font-size: clamp(2.4rem, 6.8vw, 4.8rem);
-            margin: 0 0 12px;
-            text-shadow: 0 2px 8px rgba(0, 0, 0, .5);
-        }
-
-        #heroTitle .hero-flex {
-            display: inline-flex;
-            align-items: flex-end;
-            gap: .6rem;
-        }
-
-        .nf-logo {
-            height: clamp(64px, 14vw, 170px);
-            width: auto;
-            display: inline-block;
-            animation: logoEnter .7s ease-out;
-        }
-
-        .nf-logo text {
-            font-family: "Bebas Neue", Impact, system-ui, sans-serif;
-            font-size: 180px;
-            letter-spacing: .06em;
-            fill: #e50914;
-            filter: drop-shadow(0 6px 0 rgba(0, 0, 0, .35)) drop-shadow(0 16px 24px rgba(0, 0, 0, .75));
-        }
-
-        #heroTitle .tagline {
-            font-weight: 800;
-            font-size: clamp(1rem, 2.6vw, 1.8rem);
-            line-height: 1;
-            background: linear-gradient(90deg, #ffffff, #9ad0ff, #ffffff);
-            background-size: 200% auto;
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            animation: shine 3s linear infinite, popIn .5s ease-out;
-        }
-
-        @keyframes logoEnter {
-            0% {
-                transform: translateY(12px) scale(.98);
-                opacity: 0
-            }
-
-            100% {
-                transform: none;
-                opacity: 1
-            }
-        }
-
-        .navbar {
-            overflow: visible;
-        }
-
-        .nf-brand {
-            display: inline-flex;
-            align-items: flex-end;
-            line-height: 0;
-            text-decoration: none;
-        }
-
-        .nf-brand-svg {
-            width: clamp(140px, 20vw, 240px);
-            height: auto;
-            overflow: visible;
-            filter: drop-shadow(0 2px 0 rgba(0, 0, 0, .35)) drop-shadow(0 6px 16px rgba(0, 0, 0, .55));
-            transform-origin: left center;
-            transition: transform .2s ease;
-        }
-
-        .nf-brand-svg text {
-            font-family: "Bebas Neue", Impact, system-ui, sans-serif;
-            font-size: 120px;
-            letter-spacing: .06em;
-            fill: #e50914;
-        }
-
-        .nf-brand:hover .nf-brand-svg {
-            transform: translateY(-1px) scale(1.02);
-        }
-
-        .logo {
-            color: inherit;
-            text-decoration: none;
-        }
-
-        @media (max-width: 640px) {
-            .nf-brand-svg {
-                width: clamp(120px, 28vw, 200px);
-            }
-        }
-
-        /* Enable stacking so the hovered card can rise above neighbors */
-        .row {
-            position: relative;
-            isolation: isolate;
-        }
-
-        /* Smooth transform + shadow transitions */
-        .card {
-            transform: translateZ(0) scale(1);
-            transform-origin: center;
-            transition:
-                transform 220ms cubic-bezier(.2, .8, .2, 1),
-                box-shadow 220ms cubic-bezier(.2, .8, .2, 1),
-                filter 180ms ease;
-            will-change: transform, box-shadow, filter;
-            z-index: 0;
-        }
-
-        /* Netflix-like grow */
-        @media (hover:hover) and (pointer:fine) {
-
-            .card:hover,
-            .card:focus-visible {
-                transform: scale(1.12);
-                z-index: 3;
-                box-shadow: 0 22px 60px rgba(0, 0, 0, .55);
-            }
-
-            /* Dim and slightly shrink non-hovered siblings */
-            .row:has(.card:hover) .card:not(:hover) {
-                filter: brightness(.82) saturate(.95);
-                transform: scale(.98);
-            }
-        }
-
-        /* Accessibility: reduce motion users keep subtle effect */
-        @media (prefers-reduced-motion: reduce) {
-            .card {
-                transition: none;
-            }
-        }
-
-        /* Fallback when :has() isn't available */
-        .row.row-hovering .card:not(.is-hovered) {
-            filter: brightness(.82) saturate(.95);
-            transform: scale(.98);
-        }
-
-        .row.row-hovering .card.is-hovered {
-            transform: scale(1.12);
-            z-index: 3;
-            box-shadow: 0 22px 60px rgba(0, 0, 0, .55);
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Shishir Aryal · Portfolio</title>
+
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue:wght@400..700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <meta name="color-scheme" content="dark">
+
+  <!-- Page styles -->
+  <link rel="stylesheet" href="css/portfolio.css">
 </head>
-
 <body>
-    <!-- Background video with overlay + safe fallback -->
-    <div class="video-bg" aria-hidden="true">
-        <video id="bgvid" autoplay muted loop playsinline poster="poster.jpg">
-            <source src="video.mp4" type="video/mp4">
-        </video>
-        <div class="video-overlay"></div>
+  <!-- Background video with overlay + safe fallback -->
+  <div class="video-bg" aria-hidden="true">
+    <video id="bgvid" autoplay muted loop playsinline poster="poster.jpg">
+      <source src="video.mp4" type="video/mp4">
+    </video>
+    <div class="video-overlay"></div>
+  </div>
+
+  <!-- Nav -->
+  <nav class="navbar">
+    <a class="logo nf-brand" href="index.html" aria-label="Shishir Aryal">
+      <svg class="nf-brand-svg" viewBox="0 0 1000 220" preserveAspectRatio="xMidYMid meet" role="img" aria-hidden="true">
+        <defs>
+          <path id="brand-arc" d="M20,160 C320,60 680,60 980,160" />
+        </defs>
+        <text text-anchor="middle">
+          <textPath href="#brand-arc" startOffset="50%">SHISHIR ARYAL</textPath>
+        </text>
+      </svg>
+    </a>
+
+    <div class="nav-links" role="navigation" aria-label="Primary">
+      <a href="#projects">Projects</a>
+      <a href="#education">Education</a>
+      <a href="#skills">Skills</a>
+      <a href="#experience">Experience</a>
+      <a href="#contact">Contact</a>
     </div>
+  </nav>
 
-    <!-- Nav -->
-    <nav class="navbar">
-        <a class="logo nf-brand" href="index.html" aria-label="Shishir Aryal">
-            <svg class="nf-brand-svg" viewBox="0 0 1000 220" preserveAspectRatio="xMidYMid meet" role="img"
-                aria-hidden="true">
-                <defs>
-                    <path id="brand-arc" d="M20,160 C320,60 680,60 980,160" />
-                </defs>
-                <text text-anchor="middle">
-                    <textPath href="#brand-arc" startOffset="50%">SHISHIR ARYAL</textPath>
-                </text>
-            </svg>
-        </a>
-
-        <div class="nav-links" role="navigation" aria-label="Primary">
-            <a href="#projects">Projects</a>
-            <a href="#education">Education</a>
-            <a href="#skills">Skills</a>
-            <a href="#experience">Experience</a>
-            <a href="#contact">Contact</a>
+  <main>
+    <!-- Hero -->
+    <section class="hero" id="home" aria-label="Intro">
+      <div class="inner">
+        <h1 id="heroTitle">Shishir Aryal</h1>
+        <p id="heroDesc">Welcome to my portfolio. Explore my work, skills, and journey — presented in a slick, Netflix-inspired interface.</p>
+        <div class="btns">
+          <a class="btn btn-primary" href="resume.pdf" target="_blank" rel="noopener">
+            <i class="fa-solid fa-play"></i> Resume
+          </a>
+          <a class="btn btn-secondary" href="https://www.linkedin.com/in/shishir-aryal-006b31220/" target="_blank" rel="noopener">
+            <i class="fa-brands fa-linkedin"></i> Linked-In
+          </a>
         </div>
-    </nav>
+      </div>
+    </section>
 
-    <main>
-        <!-- Hero -->
-        <section class="hero" id="home" aria-label="Intro">
-            <div class="inner">
-                <h1 id="heroTitle">Shishir Aryal</h1>
-                <p id="heroDesc">Welcome to my portfolio. Explore my work, skills, and journey — presented in a slick,
-                    Netflix-inspired interface.</p>
-                <div class="btns">
-                    <a class="btn btn-primary" href="resume.pdf" target="_blank" rel="noopener">
-                        <i class="fa-solid fa-play"></i> Resume
-                    </a>
-                    <a class="btn btn-secondary" href="https://www.linkedin.com/in/shishir-aryal-006b31220/"
-                        target="_blank" rel="noopener">
-                        <i class="fa-brands fa-linkedin"></i> Linked-In
-                    </a>
-                </div>
-            </div>
-        </section>
+    <!-- Sections -->
+    <section class="section" id="projects" aria-label="Projects">
+      <h3>Featured Projects</h3>
+      <div class="row" data-row="projects"></div>
+    </section>
 
-        <!-- Sections -->
-        <section class="section" id="projects" aria-label="Projects">
-            <h3>Featured Projects</h3>
-            <div class="row" data-row="projects"></div>
-        </section>
+    <section class="section" id="education" aria-label="Education & Certifications">
+      <h3>Education & Certifications</h3>
+      <div class="row" data-row="education"></div>
+    </section>
 
-        <section class="section" id="education" aria-label="Education & Certifications">
-            <h3>Education & Certifications</h3>
-            <div class="row" data-row="education"></div>
-        </section>
+    <section class="section" id="skills" aria-label="Skills & Technologies">
+      <h3>Skills & Technologies</h3>
+      <div class="row" data-row="skills"></div>
+    </section>
 
-        <section class="section" id="skills" aria-label="Skills & Technologies">
-            <h3>Skills & Technologies</h3>
-            <div class="row" data-row="skills"></div>
-        </section>
+    <section class="section" id="experience" aria-label="Work Experience">
+      <h3>Work Experience</h3>
+      <div class="row" data-row="experience"></div>
+    </section>
+  </main>
 
-        <section class="section" id="experience" aria-label="Work Experience">
-            <h3>Work Experience</h3>
-            <div class="row" data-row="experience"></div>
-        </section>
-    </main>
-
-    <!-- Footer -->
-    <footer class="footer" id="contact">
-        <div class="social" aria-label="Social links">
-            <a href="https://www.facebook.com/iamshishiraryal" target="_blank" rel="noreferrer noopener"
-                aria-label="Facebook"><i class="fab fa-facebook"></i></a>
-            <a href="https://www.instagram.com/iamshishiraryal/" target="_blank" rel="noreferrer noopener"
-                aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-            <a href="https://twitter.com/" target="_blank" rel="noreferrer noopener" aria-label="Twitter / X"><i
-                    class="fab fa-x-twitter"></i></a>
-            <a href="https://www.linkedin.com/in/shishir-aryal-006b31220/" target="_blank" rel="noreferrer noopener"
-                aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
-            <a href="https://github.com/ShishirAr" target="_blank" rel="noreferrer noopener" aria-label="GitHub"><i
-                    class="fab fa-github"></i></a>
-        </div>
-        <p style="margin:0">© <span id="year"></span> Shishir Aryal. All rights reserved.</p>
-    </footer>
-
-    <!-- Modal -->
-    <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle">
-        <div class="modal-content">
-            <button class="modal-close" id="mClose" aria-label="Close">&times;</button>
-            <div class="modal-header" id="mHeader"></div>
-            <div class="modal-body">
-                <h2 class="modal-title" id="mTitle"></h2>
-                <div class="details">
-                    <div class="poster"><img id="mPoster" alt=""></div>
-                    <div class="info">
-                        <p id="mDesc"></p>
-                        <div class="features" id="mFeatures"></div>
-                        <div class="btns" style="margin-top:12px">
-                            <a class="btn btn-primary" id="viewBtn" target="_blank" rel="noopener"><i
-                                    class="fa-solid fa-arrow-up-right-from-square"></i> View</a>
-                            <button class="btn btn-secondary" id="saveBtn"><i class="fa-solid fa-plus"></i>
-                                Save</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+  <!-- Footer -->
+  <footer class="footer" id="contact">
+    <div class="social" aria-label="Social links">
+      <a href="https://www.facebook.com/iamshishiraryal" target="_blank" rel="noreferrer noopener" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+      <a href="https://www.instagram.com/iamshishiraryal/" target="_blank" rel="noreferrer noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+      <a href="https://twitter.com/" target="_blank" rel="noreferrer noopener" aria-label="Twitter / X"><i class="fab fa-x-twitter"></i></a>
+      <a href="https://www.linkedin.com/in/shishir-aryal-006b31220/" target="_blank" rel="noreferrer noopener" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+      <a href="https://github.com/ShishirAr" target="_blank" rel="noreferrer noopener" aria-label="GitHub"><i class="fab fa-github"></i></a>
     </div>
+    <p style="margin:0">© <span id="year"></span> Shishir Aryal. All rights reserved.</p>
+  </footer>
 
-    <script>
-        (function () {
-            const rows = document.querySelectorAll('.row');
-            rows.forEach(row => {
-                row.addEventListener('mouseover', e => {
-                    const card = e.target.closest('.card');
-                    if (!card) return;
-                    row.classList.add('row-hovering');
-                    card.classList.add('is-hovered');
-                });
-                row.addEventListener('mouseout', e => {
-                    const card = e.target.closest('.card');
-                    if (!card) return;
-                    row.classList.remove('row-hovering');
-                    card.classList.remove('is-hovered');
-                });
-            });
-        })();
-        /* ---------------- Data ---------------- */
-        const data = {
-            projects: [
-                { id: 1, title: "E-Commerce Platform", description: "Full-stack e-commerce with auth, catalog, cart and Stripe payments.", image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=800&q=80", category: "Web", technologies: ["React", "Node.js", "MongoDB", "Stripe"], year: "2023", status: "Completed", url: "#" },
-                { id: 2, title: "Task Management App", description: "Team productivity app with real-time collaboration.", image: "https://images.unsplash.com/photo-1611224923853-80b023f02d71?auto=format&fit=crop&w=800&q=80", category: "Mobile", technologies: ["React Native", "Firebase"], year: "2022", status: "Completed", url: "#" },
-                { id: 3, title: "Weather Dashboard", description: "Real-time weather and forecasts.", image: "https://images.unsplash.com/photo-1504608524841-42fe6f032b4b?auto=format&fit=crop&w=800&q=80", category: "Web", technologies: ["JS", "REST APIs", "CSS"], year: "2022", status: "Completed", url: "#" },
-                { id: 4, title: "Portfolio Website", description: "Responsive showcase of projects and skills.", image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80", category: "Web", technologies: ["HTML", "CSS", "JavaScript"], year: "2021", status: "Completed", url: "#" },
-                { id: 5, title: "AI Chatbot", description: "NLP-driven customer service assistant.", image: "https://images.unsplash.com/photo-1531746790731-6c087fecd65a?auto=format&fit=crop&w=800&q=80", category: "AI", technologies: ["Python", "TensorFlow", "NLP"], year: "2023", status: "In Progress", url: "#" }
-            ],
-            education: [
-                { id: 1, title: "Associates in Computer Science", description: "Focus on software & hardware.", image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=800&q=80", institution: "McLennan Community College", year: "2018–2022", gpa: "3.8/4.0" },
-                { id: 2, title: "Full-Stack Web Development", description: "Modern stack bootcamp.", image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=80", institution: "Code Academy", year: "2024", duration: "6 months" },
-                { id: 3, title: "AWS Cloud Practitioner", description: "Cloud fundamentals on AWS.", image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80", institution: "Amazon Web Services", year: "2024", credential: "Certified" }
-            ],
-            skills: [
-                { id: 1, title: "Frontend Development", description: "Responsive, interactive UIs.", image: "https://images.unsplash.com/photo-1627398242454-45a1465c2479?auto=format&fit=crop&w=800&q=80", technologies: ["HTML5", "CSS3", "JavaScript", "React", "Vue"] },
-                { id: 2, title: "Backend Development", description: "APIs & databases.", image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=800&q=80", technologies: ["Node.js", "Python", "PHP", "MySQL", "MongoDB"] },
-                { id: 3, title: "UI/UX Design", description: "Clean, usable flows.", image: "https://images.unsplash.com/photo-1561070791-2526d30994b5?auto=format&fit=crop&w=800&q=80", technologies: ["Figma", "Adobe XD", "Wireframes", "Prototypes"] },
-                { id: 4, title: "Mobile Development", description: "Cross-platform apps.", image: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=800&q=80", technologies: ["React Native", "Flutter", "iOS", "Android"] }
-            ],
-            experience: [
-                { id: 1, title: "Frontend Developer", description: "Built and maintained web apps.", image: "https://images.unsplash.com/photo-1521791055366-0d553872125f?auto=format&fit=crop&w=800&q=80", company: "Tech Solutions Inc.", period: "2022–Present", responsibilities: ["UI Dev", "Code Review", "Performance"] },
-                { id: 2, title: "Web Dev Intern", description: "Assisted in features & tests.", image: "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=800&q=80", company: "Digital Agency", period: "2021–2022", responsibilities: ["Bug Fixes", "Features", "Docs"] },
-                { id: 3, title: "Freelance Developer", description: "Websites for small businesses.", image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80", company: "Self-Employed", period: "2020–2021", responsibilities: ["Build", "Consult", "Manage"] }
-            ]
-        };
+  <!-- Modal -->
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+    <div class="modal-content">
+      <button class="modal-close" id="mClose" aria-label="Close">&times;</button>
+      <div class="modal-header" id="mHeader"></div>
+      <div class="modal-body">
+        <h2 class="modal-title" id="mTitle"></h2>
+        <div class="details">
+          <div class="poster"><img id="mPoster" alt=""></div>
+          <div class="info">
+            <p id="mDesc"></p>
+            <div class="features" id="mFeatures"></div>
+            <div class="btns" style="margin-top:12px">
+              <a class="btn btn-primary" id="viewBtn" target="_blank" rel="noopener"><i class="fa-solid fa-arrow-up-right-from-square"></i> View</a>
+              <button class="btn btn-secondary" id="saveBtn"><i class="fa-solid fa-plus"></i> Save</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-        /* ---------- Helpers ---------- */
-        const $ = (sel, root = document) => root.querySelector(sel);
-        const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
-
-        const yearEl = $('#year'); yearEl.textContent = new Date().getFullYear();
-
-        // Sticky nav color
-        window.addEventListener('scroll', () => {
-            const nav = $('.navbar');
-            if (scrollY > 96) nav.classList.add('scrolled'); else nav.classList.remove('scrolled');
-        });
-
-        // Background video safe autoplay + fallback
-        (function () {
-            const v = $('#bgvid');
-            const tryPlay = () => v.play().catch(() => { /* ignore */ });
-            document.addEventListener('DOMContentLoaded', tryPlay, { once: true });
-            setTimeout(() => { if (v.readyState < 3) v.remove(); }, 3500);
-        })();
-
-        function setHeroTitle(text) {
-            const el = document.getElementById('heroTitle');
-            el.classList.remove('title-animate');
-            void el.offsetWidth; // restart CSS animation
-            el.textContent = text;
-            el.classList.add('title-animate');
-        }
-
-        // URL / storage profile → customize hero
-        (function () {
-            const params = new URLSearchParams(location.search);
-            const fromURL = params.get('profile');
-            const fromLS = localStorage.getItem('selectedProfile');
-            const profile = (fromURL || fromLS || 'general').toLowerCase();
-            if (fromURL) localStorage.setItem('selectedProfile', profile);
-
-            const desc = $('#heroDesc');
-            const tweaks = {
-                recruiter: {
-                    t: "Frontend / Full-Stack Developer",
-                    d: "Thanks for dropping by! Below are selected highlights relevant to hiring: shipped projects, core skills, and recent experience."
-                },
-                client: {
-                    t: "Shishir Aryal- CSE @ UT ARLINGTON",
-                    d: "Hi, I’m Shishir Aryal, a junior Computer Science student at the University of Texas at Arlington. I’m passionate about Artificial Intelligence, Machine Learning, and building smart systems that solve real problems.I love exploring how data, algorithms, and creativity come together to create technology that makes life better. Currently, I’m working on projects involving AI models, data analysis, and automation tools — always learning something new along the way."
-                },
-                friend: {
-                    t: "Hey! You made it 👋",
-                    d: "Scroll for projects I’m proud of and what I’ve been tinkering with lately."
-                },
-                general: {
-                    t: "I Love You :)",
-                    d: "Welcome to my portfolio. Explore my work, skills, and journey — presented in a slick, Netflix-inspired interface."
-                }
-            }[profile];
-
-            setHeroTitle(tweaks.t);
-            desc.textContent = tweaks.d;
-        })();
-
-        // Build a single card
-        function makeCard(item, type, idx) {
-            const el = document.createElement('article');
-            el.className = 'card';
-            el.style.animationDelay = `${idx * 80}ms`; // stagger entrance
-            el.setAttribute('tabindex', '0');
-            el.innerHTML = `
-                <div class="media">
-                    <img loading="lazy" src="${item.image}" alt="${item.title}">
-                </div>
-                <div class="meta">
-                    <h4 class="title">${item.title}</h4>
-                    <p class="desc">${(item.description || '').slice(0, 80)}${(item.description && item.description.length > 80) ? '…' : ''}</p>
-                </div>
-            `;
-            el.addEventListener('click', () => openModal(item, type));
-            el.addEventListener('keypress', (e) => { if (e.key === 'Enter') el.click(); });
-            return el;
-        }
-
-        // Ensure exactly 5 cards per section; fill with "Coming Soon" placeholders if needed
-        const placeholder = (i) => ({
-            id: `ph-${i}`, title: "Coming Soon", description: "New item will appear here.",
-            image: "https://images.unsplash.com/photo-1522199710521-72d69614c702?auto=format&fit=crop&w=800&q=60"
-        });
-
-        function populate() {
-            for (const key of ['projects', 'education', 'skills', 'experience']) {
-                const row = document.querySelector(`.row[data-row="${key}"]`);
-                row.innerHTML = '';
-                const items = data[key].slice(0, 5);             // take up to 5
-                while (items.length < 5) items.push(placeholder(items.length + 1)); // pad to 5
-                items.forEach((item, i) => row.appendChild(makeCard(item, key, i)));
-            }
-        }
-        populate();
-
-        // Modal
-        const modal = $('#modal'), mHeader = $('#mHeader'), mTitle = $('#mTitle'),
-            mPoster = $('#mPoster'), mDesc = $('#mDesc'), mFeatures = $('#mFeatures'),
-            mClose = $('#mClose'), viewBtn = $('#viewBtn');
-
-        function addFeature(label, value) {
-            const f = document.createElement('div');
-            f.className = 'feature';
-            f.innerHTML = `<span class="label">${label}:</span><span>${value}</span>`;
-            mFeatures.appendChild(f);
-        }
-        function openModal(item, type) {
-            mHeader.style.backgroundImage = `url('${item.image}')`;
-            mTitle.textContent = item.title;
-            mPoster.src = item.image; mPoster.alt = item.title;
-            mDesc.textContent = item.description || '';
-            mFeatures.innerHTML = '';
-
-            if (type === 'projects') {
-                addFeature('Category', item.category || '—');
-                addFeature('Tech', (item.technologies || []).join(', ') || '—');
-                addFeature('Year', item.year || '—');
-                addFeature('Status', item.status || '—');
-                viewBtn.href = item.url || '#';
-            } else if (type === 'education') {
-                addFeature('Institution', item.institution || '—');
-                addFeature('Year', item.year || '—');
-                if (item.gpa) addFeature('GPA', item.gpa);
-                if (item.duration) addFeature('Duration', item.duration);
-                if (item.credential) addFeature('Credential', item.credential);
-                viewBtn.href = '#';
-            } else if (type === 'skills') {
-                addFeature('Tech', (item.technologies || []).join(', ') || '—');
-                viewBtn.href = '#';
-            } else if (type === 'experience') {
-                addFeature('Company', item.company || '—');
-                addFeature('Period', item.period || '—');
-                if (item.responsibilities) addFeature('Responsibilities', item.responsibilities.join(', '));
-                viewBtn.href = '#';
-            }
-
-            modal.style.display = 'block';
-            document.body.style.overflow = 'hidden';
-        }
-        mClose.addEventListener('click', () => { modal.style.display = 'none'; document.body.style.overflow = ''; });
-        window.addEventListener('click', (e) => { if (e.target === modal) { mClose.click(); } });
-    </script>
+  <!-- Page scripts -->
+  <script src="js/portfolio.js" defer></script>
 </body>
-
 </html>
