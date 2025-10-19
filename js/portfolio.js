@@ -190,7 +190,7 @@ if (mClose) mClose.addEventListener('click', () => { modal.style.display = 'none
 window.addEventListener('click', (e) => { if (e.target === modal) { mClose.click(); } });
 
 
-// --- Mobile nav toggle ---
+// --- Mobile nav toggle --
 (function () {
   const btn = document.getElementById('menuToggle');
   const links = document.getElementById('primaryNav');
