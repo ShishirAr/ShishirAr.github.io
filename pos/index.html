@@ -1,1 +1,471 @@
 
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>POS Analyzer</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/plotly.js-dist-min"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: system-ui;
+            background: linear-gradient(135deg, #1e1e2f, #3a3a5c);
+            color: #fff
+        }
+
+        header {
+            padding: 2rem;
+            text-align: center;
+            background: radial-gradient(circle at top left, #6a5acd, #1e1e2f)
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin: 0
+        }
+
+        .container {
+            padding: 1.5rem;
+            max-width: 1200px;
+            margin: auto
+        }
+
+        .card {
+            background: #2b2b3d;
+            padding: 1rem 1.5rem;
+            margin: 1rem 0;
+            border-radius: 14px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, .3)
+        }
+
+        button,
+        input {
+            padding: .6rem;
+            border-radius: 8px;
+            border: none;
+            margin: .3rem 0
+        }
+
+        /* Big Analyze Button */
+        .analyze-big {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            font-size: 1.4rem;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #7b6df0, #6a5acd);
+            color: #fff;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            transition: 0.2s;
+        }
+
+        .analyze-big:hover {
+            background: linear-gradient(135deg, #8c7fff, #7b6df0);
+            transform: translateY(-2px);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem
+        }
+
+        th,
+        td {
+            padding: .5rem;
+            border-bottom: 1px solid #444
+        }
+
+        th {
+            text-align: left
+        }
+
+        .chart {
+            margin-top: 1rem
+        }
+
+        .link-button {
+            background: none;
+            border: none;
+            color: #7b6df0;
+            cursor: pointer;
+            padding: 0;
+            font-size: 0.95rem
+        }
+
+        .link-button:hover {
+            text-decoration: underline
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>Daily POS Analyzer</h1>
+        <p>Upload an Excel file to analyze sales</p>
+    </header>
+
+    <div class="container">
+
+        <div class="card">
+            <h2>Upload POS Report</h2>
+            <input type="file" id="fileInput" accept=".xlsx" />
+            <button id="analyzeBtn" class="analyze-big" style="display:none;" onclick="startAnalysis()">
+                Analyze Sales Report
+            </button>
+        </div>
+
+        <div id="results" style="display:none;">
+            <div class="card" id="summaryCard"></div>
+
+            <div class="card">
+                <h2>Top Sellers</h2>
+                <div id="chartTop"></div>
+                <div id="tableTop"></div>
+            </div>
+            <div class="card">
+                <h2>Mid Sellers</h2>
+                <button id="midToggle" class="link-button" style="margin-bottom:10px;">Show More ▼</button>
+                <div id="chartMid"></div>
+                <div id="tableMid"></div>
+            </div>
+
+            <div class="card">
+                <h2>Least Sellers</h2>
+                <div id="chartLeast"></div>
+                <div id="tableLeast"></div>
+            </div>
+            <div class="card">
+                <h2>Potential Items</h2>
+                <div id="chartPotential"></div>
+                <div id="tablePotential"></div>
+            </div>
+
+            <!-- DEPARTMENT SECTION -->
+            <div class="card">
+                <h2>Sales by Department</h2>
+                <div id="deptChart"></div>
+                <div id="deptTable"></div>
+                <div id="deptDetail" style="display:none;margin-top:1rem;"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        let rawData = [];
+        let headers = [];
+        let autoItem = "", autoQty = "", autoPrice = "", autoDept = null;
+
+        /* --------------------
+           FILE UPLOAD
+        --------------------- */
+        document.getElementById("fileInput").addEventListener("change", e => {
+            processFile(e.target.files[0]);
+        });
+
+        /* --------------------
+           PROCESS FILE
+        --------------------- */
+        function processFile(file) {
+            const reader = new FileReader();
+
+            reader.onload = e => {
+                const wb = XLSX.read(e.target.result, { type: "binary" });
+                const sheet = wb.Sheets[wb.SheetNames[0]];
+                const raw = XLSX.utils.sheet_to_json(sheet, { header: 1, raw: true });
+
+                // HEADER DETECTION
+                let headerRowIndex = 4;
+                for (let i = 0; i < raw.length; i++) {
+                    const row = (raw[i] || []).join(" ").toLowerCase();
+                    if ((/desc|item|description/).test(row) && (/sold|qty|units|quantity/).test(row)) {
+                        headerRowIndex = i;
+                        break;
+                    }
+                }
+
+                headers = raw[headerRowIndex];
+                rawData = XLSX.utils.sheet_to_json(sheet, { range: headerRowIndex });
+
+                // AUTO DETECT COLUMNS
+                autoItem = headers.find(h => /desc|item|description/i.test(h)) || headers[0];
+                autoQty = headers.find(h => h.trim().toLowerCase() === "# sold") ||
+                    headers.find(h => /sold|qty|units/i.test(h));
+                autoPrice = headers.find(h => /avg price|price/i.test(h)) || "";
+
+                // Auto-detect Department
+                autoDept = headers.find(h => /department/i.test(h)) || null;
+
+                document.getElementById("analyzeBtn").style.display = "block";
+            };
+
+            reader.readAsBinaryString(file);
+        }
+
+        /* --------------------
+           ANALYZE
+        --------------------- */
+        function startAnalysis() {
+
+            let data = rawData.map(r => ({
+                item: r[autoItem],
+                qty: Number(r[autoQty]) || 0,
+                price: Number(r[autoPrice]) || 0,
+                dept: autoDept ? r[autoDept] : "Unknown"
+            })).filter(d => d.item);
+
+            // GROUP LIKE PYTHON (by item)
+            const grouped = {};
+            data.forEach(d => {
+                if (!grouped[d.item]) grouped[d.item] = { qty: 0, price: d.price, dept: d.dept };
+                grouped[d.item].qty += d.qty;
+            });
+
+            data = Object.keys(grouped).map(k => ({
+                item: k,
+                qty: Math.max(0, grouped[k].qty),
+                price: grouped[k].price,
+                dept: grouped[k].dept
+            }));
+
+            window.cleaned = data;
+            computeAll();
+        }
+
+        /* --------------------
+           SUMMARY + METRICS
+        --------------------- */
+        function computeAll() {
+            const data = window.cleaned;
+
+            const totalUnits = data.reduce((a, b) => a + b.qty, 0);
+            const uniqueItems = data.length;
+            const avg = (totalUnits / uniqueItems).toFixed(2);
+
+            // Best Seller
+            const sortedAll = [...data].sort((a, b) => b.qty - a.qty);
+            const bestItem = sortedAll[0];
+
+            // Least Seller (>0) – fixed
+            const leastItem = [...sortedAll].reverse().find(it => it.qty > 0);
+
+            const numberOfTransactions = rawData.length;
+            const totalSales = data.reduce((sum, d) => sum + (d.qty * d.price), 0).toFixed(2);
+
+            document.getElementById("summaryCard").innerHTML = `
+    <h2>Summary</h2>
+
+    <p><b>Total item sold:</b> ${totalUnits}</p>
+    <p><b>Best selling item:</b> ${bestItem.item} (count: ${bestItem.qty})</p>
+    <p><b>Least selling item:</b> ${leastItem.item} (count: ${leastItem.qty})</p>
+
+    <p><b>Average item bought:</b> ${avg}</p>
+
+    <p><b>Number of transactions:</b> ${numberOfTransactions}</p>
+    <p><b>Total sales of items:</b> $${totalSales}</p>
+  `;
+
+            // CHART SECTIONS
+            const sorted = [...data].sort((a, b) => b.qty - a.qty);
+            const top = sorted.slice(0, 10);
+            const least = sorted.slice(-10);
+            const cutoff = top[top.length - 1]?.qty || 0;
+            const potential = data.filter(d => d.qty < cutoff && d.qty >= cutoff * 0.75);
+            // MID SELLERS FULL
+            let midFull = sorted.slice(Math.floor(uniqueItems * 0.25), Math.floor(uniqueItems * 0.75));
+
+            // MID SELLERS PREVIEW (first 20)
+            let midPreview = midFull.slice(0, 20);
+
+            // Save both lists for toggling
+            window.midFull = midFull;
+            window.midPreview = midPreview;
+
+            // by default show preview (20 items)
+            makeSection("chartMid", "tableMid", midPreview);
+
+            // Enable toggle button
+            document.getElementById("midToggle").onclick = toggleMidSellers;
+            document.getElementById("midToggle").style.display = "inline-block";
+
+
+            makeSection("chartTop", "tableTop", top);
+            makeSection("chartLeast", "tableLeast", least);
+            makeSection("chartPotential", "tablePotential", potential);
+
+            renderDeptSection();
+
+            document.getElementById("results").style.display = "";
+        }
+
+        /* --------------------
+           SALES BY DEPARTMENT (with drill-down)
+        --------------------- */
+        function renderDeptSection() {
+            const groups = {};
+
+            // aggregate by department
+            window.cleaned.forEach(d => {
+                if (!groups[d.dept]) groups[d.dept] = { units: 0, sales: 0 };
+                groups[d.dept].units += d.qty;
+                groups[d.dept].sales += d.qty * d.price;
+            });
+
+            // Chart
+            Plotly.newPlot("deptChart", [{
+                x: Object.values(groups).map(g => g.units),
+                y: Object.keys(groups),
+                type: "bar",
+                orientation: "h"
+            }], {
+                margin: { l: 180, r: 40, t: 30, b: 30 },
+                height: 600,
+                autosize: true,
+                yaxis: { automargin: true }
+            });
+
+            // Table with clickable rows
+            let html = `<table>
+        <tr><th>Department</th><th>Units Sold</th><th>Total Sales ($)</th></tr>`;
+
+            // Sort departments by most → least units sold
+            const sortedDepts = Object.keys(groups).sort((a, b) => {
+                return groups[b].units - groups[a].units;
+            });
+
+            sortedDepts.forEach(dept => {
+                html += `<tr class="dept-row" data-dept="${dept}">
+        <td><button class="link-button" type="button">${dept}</button></td>
+        <td>${groups[dept].units}</td>
+        <td>$${groups[dept].sales.toFixed(2)}</td>
+    </tr>`;
+            });
+
+
+            html += "</table>";
+            const tableDiv = document.getElementById("deptTable");
+            tableDiv.innerHTML = html;
+
+            // attach click handlers
+            tableDiv.querySelectorAll(".dept-row").forEach(row => {
+                const dept = row.getAttribute("data-dept");
+                row.addEventListener("click", () => showDeptDetail(dept));
+            });
+
+            // reset view
+            document.getElementById("deptChart").style.display = "";
+            document.getElementById("deptTable").style.display = "";
+            document.getElementById("deptDetail").style.display = "none";
+        }
+
+        function showDeptDetail(dept) {
+            let items = window.cleaned.filter(d => d.dept === dept);
+
+            // Sort items by units sold (descending)
+            items = items.sort((a, b) => b.qty - a.qty);
+
+
+            let html = `
+      <button class="link-button" type="button" onclick="hideDeptDetail()">
+        &larr; Back to Departments
+      </button>
+      <h3 style="margin-top:0.5rem;">Department: ${dept}</h3>
+      <table>
+        <tr><th>Item</th><th>Units Sold</th><th>Price</th><th>Total Sales ($)</th></tr>
+    `;
+
+            items.forEach(it => {
+                const total = (it.qty * it.price).toFixed(2);
+                html += `
+          <tr>
+            <td>${it.item}</td>
+            <td>${it.qty}</td>
+            <td>${it.price}</td>
+            <td>$${total}</td>
+          </tr>`;
+            });
+
+            html += "</table>";
+
+            document.getElementById("deptDetail").innerHTML = html;
+
+            // hide dept summary, show detail
+            document.getElementById("deptChart").style.display = "none";
+            document.getElementById("deptTable").style.display = "none";
+            document.getElementById("deptDetail").style.display = "";
+        }
+
+        function hideDeptDetail() {
+            document.getElementById("deptDetail").style.display = "none";
+            document.getElementById("deptChart").style.display = "";
+            document.getElementById("deptTable").style.display = "";
+        }
+
+        /* --------------------
+           CHART SECTIONS
+        --------------------- */
+        function makeSection(chartId, tableId, list) {
+
+            Plotly.newPlot(chartId, [{
+                x: list.map(x => x.qty),
+                y: list.map(x => x.item),
+                type: "bar",
+                orientation: "h",
+                text: list.map(x => `${x.item}`),
+                textposition: "outside"
+            }], {
+                margin: { l: 220, r: 40, t: 30, b: 30 },
+                height: 600,
+                autosize: true,
+                yaxis: { automargin: true }
+            });
+
+            let html = `<table>
+      <tr><th>Item</th><th>Units Sold</th><th>Price</th><th>Department</th></tr>`;
+
+            list.forEach(r => {
+                html += `<tr>
+      <td>${r.item}</td>
+      <td>${r.qty}</td>
+      <td>${r.price}</td>
+      <td>${r.dept}</td>
+    </tr>`;
+            });
+
+            html += "</table>";
+            document.getElementById(tableId).innerHTML = html;
+        }
+        function toggleMidSellers() {
+            const table = document.getElementById("tableMid");
+            const chart = document.getElementById("chartMid");
+            const btn = document.getElementById("midToggle");
+
+            if (btn.dataset.expanded === "true") {
+                // collapse → back to 20 items
+                makeSection("chartMid", "tableMid", window.midPreview);
+                btn.innerHTML = "Show More ▼";
+                btn.dataset.expanded = "false";
+            } else {
+                // expand → full list
+                makeSection("chartMid", "tableMid", window.midFull);
+                btn.innerHTML = "Show Less ▲";
+                btn.dataset.expanded = "true";
+            }
+        }
+
+
+    </script>
+
+</body>
+
+</html>
