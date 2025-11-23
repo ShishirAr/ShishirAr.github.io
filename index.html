@@ -1,81 +1,544 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Who’s Viewing? · Portfolio</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shishir Aryal | Ultimate Portfolio</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Oswald:wght@400;500&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
-  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <meta name="color-scheme" content="dark">
+    <style>
+        /* --- VARIABLES --- */
+        :root {
+            --bg-color: #060606;
+            --text-color: #EAE7E3;
+            --accent-color: #EF5143;
+            --dim-color: #5C5A57;
+            --border-color: rgba(234, 231, 227, 0.1);
+            --modal-bg: #0f0f0f;
+            --font-main: 'Inter', sans-serif;
+            --font-display: 'Syne', sans-serif;
+            --font-mono: 'Oswald', sans-serif;
+        }
 
-  <link rel="stylesheet" href="css/index.css">
+        /* --- RESET --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
+        
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-main);
+            overflow-x: hidden;
+            width: 100%;
+        }
+
+        a { text-decoration: none; color: inherit; }
+        ul { list-style: none; }
+        img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        section { padding: 6rem 3rem; border-bottom: 1px solid var(--border-color); }
+
+        /* --- CUSTOM CURSOR --- */
+        .cursor-dot, .cursor-outline {
+            position: fixed; top: 0; left: 0;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            z-index: 9999;
+            pointer-events: none;
+        }
+        .cursor-dot { width: 8px; height: 8px; background-color: var(--accent-color); }
+        .cursor-outline {
+            width: 40px; height: 40px;
+            border: 1px solid var(--dim-color);
+            transition: width 0.2s, height 0.2s, background-color 0.2s;
+        }
+        body.hovering .cursor-outline {
+            width: 60px; height: 60px;
+            background-color: rgba(239, 81, 67, 0.1);
+            border-color: var(--accent-color);
+        }
+
+        /* --- LOADER --- */
+        .loader {
+            position: fixed; inset: 0; background: var(--bg-color); z-index: 10000;
+            display: flex; justify-content: center; align-items: center;
+            flex-direction: column;
+        }
+        .loader-text { font-family: var(--font-mono); letter-spacing: 10px; margin-bottom: 20px; }
+        .loader-bar { width: 200px; height: 2px; background: #222; position: relative; overflow: hidden; }
+        .loader-progress {
+            position: absolute; top: 0; left: 0; height: 100%; width: 0%;
+            background: var(--accent-color);
+        }
+
+        /* --- NAV --- */
+        nav {
+            position: fixed; top: 0; width: 100%; padding: 2rem 3rem;
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 100; mix-blend-mode: difference;
+        }
+        .logo { font-family: var(--font-display); font-weight: 800; font-size: 1.5rem; text-transform: uppercase; }
+        .nav-links a {
+            margin-left: 2rem; font-family: var(--font-mono); text-transform: uppercase;
+            font-size: 0.9rem; letter-spacing: 1px; position: relative;
+        }
+        .nav-links a::after {
+            content: ''; position: absolute; bottom: -5px; left: 0; width: 0%; height: 1px;
+            background: var(--accent-color); transition: width 0.3s;
+        }
+        .nav-links a:hover::after { width: 100%; }
+
+        /* --- HERO --- */
+        .hero {
+            height: 100vh; display: flex; flex-direction: column; justify-content: center;
+            padding: 0 3rem; position: relative; border-bottom: 1px solid var(--border-color);
+        }
+        .hero h1 {
+            font-family: var(--font-display); font-size: 5vw; line-height: 0.9;
+            text-transform: uppercase; max-width: 1200px; margin-bottom: 2rem;
+        }
+        .hero h1 span { color: var(--dim-color); }
+        .hero-meta {
+            display: flex; justify-content: space-between; align-items: flex-end;
+            font-family: var(--font-mono); color: var(--accent-color); text-transform: uppercase;
+            letter-spacing: 2px; font-size: 0.9rem;
+        }
+
+        /* --- MARQUEE --- */
+        .marquee-container {
+            width: 100%; overflow: hidden; padding: 5rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .marquee-track { display: flex; white-space: nowrap; }
+        .marquee-item {
+            font-family: var(--font-display); font-size: 8vw; font-weight: 800;
+            text-transform: uppercase; padding-right: 4vw;
+            color: transparent; -webkit-text-stroke: 2px var(--text-color);
+            transition: color 0.3s;
+        }
+        .marquee-item:hover { color: var(--text-color); }
+
+        /* --- BELIEFS --- */
+        .beliefs { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+        .belief-card { padding: 2rem; border: 1px solid var(--border-color); transition: border-color 0.3s; }
+        .belief-card:hover { border-color: var(--accent-color); }
+        .belief-card h3 { font-family: var(--font-mono); color: var(--accent-color); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 2px; }
+        .belief-card p { line-height: 1.6; color: #aaa; }
+
+        /* --- LOVES --- */
+        .section-header { font-family: var(--font-display); font-size: 4rem; margin-bottom: 4rem; text-transform: uppercase; }
+        .loves-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 3rem; }
+        .love-cat h3 { border-bottom: 1px solid var(--dim-color); padding-bottom: 1rem; margin-bottom: 1.5rem; font-family: var(--font-mono); color: var(--accent-color); text-transform: uppercase; }
+        .love-item { margin-bottom: 1.5rem; }
+        .love-item h4 { font-weight: 600; margin-bottom: 0.2rem; }
+        .love-item p { font-size: 0.85rem; color: var(--dim-color); }
+        
+        /* Style for the clickable drone link */
+        .drone-link {
+            display: block;
+            cursor: none; /* Use custom cursor */
+        }
+        .drone-link h4 {
+            transition: color 0.3s;
+        }
+        .drone-link:hover h4 {
+            color: var(--accent-color);
+        }
+
+        /* --- WORKS --- */
+        .work-item {
+            border-top: 1px solid var(--border-color); padding: 3rem 0;
+            display: flex; justify-content: space-between; align-items: center;
+            transition: background 0.3s; position: relative;
+        }
+        .work-item:last-child { border-bottom: 1px solid var(--border-color); }
+        .work-item:hover { background: rgba(255,255,255,0.02); }
+        .work-info h2 { font-family: var(--font-display); font-size: 3rem; text-transform: uppercase; margin-bottom: 0.5rem; }
+        .work-info p { font-family: var(--font-mono); color: var(--dim-color); letter-spacing: 1px; text-transform: uppercase; }
+        .work-arrow { font-size: 3rem; transform: rotate(-45deg); transition: transform 0.3s; }
+        .work-item:hover .work-arrow { transform: rotate(0deg) translateX(10px); color: var(--accent-color); }
+        
+        .hover-reveal {
+            position: fixed; width: 300px; height: 200px; pointer-events: none;
+            z-index: 50; opacity: 0; transform: scale(0.8);
+            transition: opacity 0.3s, transform 0.3s; top: 0; left: 0;
+        }
+        .work-item:hover .hover-reveal { opacity: 1; transform: scale(1); }
+
+        /* --- THOUGHTS --- */
+        .thought-item {
+            display: grid; grid-template-columns: 1fr 3fr; gap: 2rem; padding: 2rem 0; border-top: 1px solid var(--border-color);
+            transition: color 0.3s;
+        }
+        .thought-item:hover { color: var(--accent-color); }
+        .thought-date { font-family: var(--font-mono); color: var(--dim-color); }
+        .thought-title { font-size: 1.5rem; font-weight: 400; }
+
+        /* --- CONTACT --- */
+        .contact-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; }
+        .contact-form input, .contact-form textarea {
+            width: 100%; background: transparent; border: none; border-bottom: 1px solid var(--dim-color);
+            color: var(--text-color); padding: 1rem 0; font-family: var(--font-main); font-size: 1.2rem;
+            margin-bottom: 2rem; outline: none; transition: border-color 0.3s;
+        }
+        .contact-form input:focus, .contact-form textarea:focus { border-bottom-color: var(--accent-color); }
+        .btn {
+            background: transparent; border: 1px solid var(--text-color); color: var(--text-color);
+            padding: 1rem 3rem; text-transform: uppercase; font-family: var(--font-mono); letter-spacing: 2px;
+            cursor: pointer; transition: all 0.3s;
+        }
+        .btn:hover { background: var(--text-color); color: var(--bg-color); }
+
+        /* --- MODAL --- */
+        .project-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--modal-bg); z-index: 2000;
+            transform: translateY(100%); transition: transform 0.8s cubic-bezier(0.7, 0, 0.3, 1);
+            overflow-y: auto; padding: 4rem 3rem;
+        }
+        .project-modal.active { transform: translateY(0); }
+        .close-btn {
+            position: absolute; top: 2rem; right: 3rem;
+            font-family: var(--font-mono); font-size: 1.5rem; color: var(--text-color);
+            border: 1px solid var(--dim-color); padding: 0.5rem 1.5rem; border-radius: 50px;
+            cursor: none; transition: all 0.3s; text-transform: uppercase;
+        }
+        .close-btn:hover { background: var(--accent-color); border-color: var(--accent-color); color: #000; }
+        .modal-content { max-width: 1200px; margin: 6rem auto 0; opacity: 0; transition: opacity 0.5s 0.5s; }
+        .modal-title { font-family: var(--font-display); font-size: 5rem; text-transform: uppercase; line-height: 0.9; margin-bottom: 2rem; }
+        .modal-tags { display: flex; gap: 1rem; margin-bottom: 4rem; font-family: var(--font-mono); color: var(--accent-color); text-transform: uppercase; }
+        .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; margin-bottom: 4rem; }
+        .modal-desc { font-size: 1.2rem; line-height: 1.6; color: #ccc; }
+        .modal-gallery { display: grid; grid-template-columns: 1fr; gap: 2rem; }
+        .modal-img { width: 100%; height: 60vh; background: #222; overflow: hidden; }
+
+        /* --- FOOTER --- */
+        footer { padding: 4rem 3rem; border-top: 1px solid var(--border-color); text-align: center; font-family: var(--font-mono); color: var(--dim-color); text-transform: uppercase; }
+
+        @media(max-width: 768px) {
+            .hero h1, .section-header, .modal-title { font-size: 3rem; }
+            .modal-grid, .contact-layout { grid-template-columns: 1fr; }
+            .nav-links, .hover-reveal { display: none; }
+        }
+    </style>
 </head>
 <body>
-  <nav class="navbar" aria-label="Top">
-    <a class="logo" href="index.html">PORTFOLIO</a>
-  </nav>
 
-  <main class="profile-selection">
-    <h1 class="profile-title">Who’s viewing?</h1>
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
 
-    <div class="profiles" role="list">
-      <button class="profile-tile" data-profile="recruiter" role="listitem" aria-label="Recruiter">
-        <div class="tile-inner">
-          <div class="avatar">
-            <img loading="eager" fetchpriority="high"
-              src="https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=480&q=80"
-              width="480" height="480" alt="Recruiter">
-          </div>
-          <span class="label">Recruiter</span>
-        </div>
-      </button>
-
-      <button class="profile-tile" data-profile="client" role="listitem" aria-label="Client">
-        <div class="tile-inner">
-          <div class="avatar">
-            <img loading="lazy" decoding="async"
-              src="https://images.unsplash.com/photo-1568602471122-7832951cc4c5?auto=format&fit=crop&w=480&q=80"
-              width="480" height="480" alt="Client">
-          </div>
-          <span class="label">Client</span>
-        </div>
-      </button>
-
-      <button class="profile-tile" data-profile="friend" role="listitem" aria-label="Friend">
-        <div class="tile-inner">
-          <div class="avatar">
-            <img loading="lazy" decoding="async" src="friends.jpg" width="800" height="800" alt="Friend">
-          </div>
-          <span class="label">Friend</span>
-        </div>
-      </button>
-
-      <button class="profile-tile" data-profile="general" role="listitem" aria-label="Girlfriend">
-        <div class="tile-inner">
-          <div class="avatar">
-            <img loading="lazy" decoding="async" src="gf.jpg" width="800" height="800" alt="Girlfriend">
-          </div>
-          <span class="label">Who?</span>
-        </div>
-      </button>
+    <div class="loader">
+        <div class="loader-text">SHISHIR ARYAL</div>
+        <div class="loader-bar"><div class="loader-progress"></div></div>
     </div>
 
-    <button class="manage-profiles" type="button" aria-describedby="mp-note">Manage Profiles</button>
-    <p id="mp-note" class="sr-only">Opens a placeholder — wire up as needed.</p>
-  </main>
+    <nav>
+        <div class="logo hover-trigger">Shishir Aryal</div>
+        <div class="nav-links">
+            <a href="#hero" class="hover-trigger">Life</a>
+            <a href="#loves" class="hover-trigger">Passions</a>
+            <a href="#works" class="hover-trigger">Works</a>
+            <a href="#thoughts" class="hover-trigger">Thoughts</a>
+            <a href="#contact" class="hover-trigger">Contact</a>
+        </div>
+    </nav>
 
-  <footer>
-    <div class="social" aria-label="Social links">
-      <a href="https://www.facebook.com/iamshishiraryal" target="_blank" rel="noreferrer noopener" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
-      <a href="https://www.instagram.com/iamshishiraryal/" target="_blank" rel="noreferrer noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-      <a href="https://twitter.com/" target="_blank" rel="noreferrer noopener" aria-label="Twitter / X"><i class="fab fa-x-twitter"></i></a>
-      <a href="https://www.linkedin.com/in/shishir-aryal-006b31220/" target="_blank" rel="noreferrer noopener" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
-      <a href="https://github.com/ShishirAr" target="_blank" rel="noreferrer noopener" aria-label="GitHub"><i class="fab fa-github"></i></a>
+    <section id="hero" class="hero">
+        <div class="hero-meta">
+            <span>Est. 2025</span>
+            <span>Available for Hire</span>
+        </div>
+        <h1 class="reveal-text">
+            Building digital experiences<br>
+            that <span>solve real problems</span><br>
+            with code & creativity.
+        </h1>
+        <div class="hero-meta" style="justify-content: flex-start; margin-top: 2rem;">
+            <span style="color: #fff;">Software Engineer & Entrepreneur</span>
+        </div>
+    </section>
+
+    <div class="marquee-container">
+        <div class="marquee-track">
+            <span class="marquee-item">Software Engineer Creative Developer Entrepreneur &nbsp;</span>
+            <span class="marquee-item">Software Engineer Creative Developer Entrepreneur &nbsp;</span>
+            <span class="marquee-item">Software Engineer Creative Developer Entrepreneur &nbsp;</span>
+        </div>
     </div>
-    <p style="text-align:center;margin:0;">© <span id="y"></span> My Portfolio. All rights reserved.</p>
-  </footer>
 
-  <script src="js/index.js" defer></script>
+    <section id="beliefs" class="beliefs">
+        <div class="belief-card hover-trigger">
+            <h3>The Creative Process</h3>
+            <p>"I create limits, such as putting a time limit on my work or limiting myself to specific colors. This constraint forces me to use my imagination."</p>
+        </div>
+        <div class="belief-card hover-trigger">
+            <h3>Technical Mastery</h3>
+            <p>From Data Structures & Algorithms to Professional Technical Writing, I believe in understanding the underlying systems to build better designs.</p>
+        </div>
+        <div class="belief-card hover-trigger">
+            <h3>Business Logic</h3>
+            <p>Design isn't just art; it's business. Owning a retail business has taught me that user experience translates directly to the bottom line.</p>
+        </div>
+    </section>
+
+    <section id="loves">
+        <h2 class="section-header reveal-text">Passions</h2>
+        <div class="loves-grid">
+            <div class="love-cat fade-up">
+                <h3>Tech</h3>
+                <a href="#drone-modal" class="love-item drone-link hover-trigger" id="openDroneModal">
+                    <h4>Drone Cinematography</h4>
+                    <p>Capturing the world from above. (Click to view)</p>
+                </a>
+                <div class="love-item"><h4>AI Video</h4><p>Generating new realities with Veo.</p></div>
+            </div>
+            <div class="love-cat fade-up">
+                <h3>Code</h3>
+                <div class="love-item"><h4>React</h4><p>Building interactive UIs.</p></div>
+                <div class="love-item"><h4>Algorithms</h4><p>Optimizing for efficiency.</p></div>
+            </div>
+            <div class="love-cat fade-up">
+                <h3>Media</h3>
+                <div class="love-item"><h4>Inception</h4><p>A masterpiece of structure.</p></div>
+                <div class="love-item"><h4>Gaming</h4><p>Strategy & Reflexes.</p></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="works" class="works-section">
+        <h2 class="section-header reveal-text">Featured Projects</h2>
+        
+        <div class="work-item hover-trigger" data-project="1">
+            <div class="work-info"><h2>Klopchik-AI</h2><p>Custom AI • NLP • Contextual Learning</p></div>
+            <div class="work-arrow">→</div>
+            <img src="https://images.unsplash.com/photo-1531746790731-6c087fecd65a?q=80&w=600&auto=format&fit=crop" class="hover-reveal" alt="AI Face">
+        </div>
+
+        <div class="work-item hover-trigger" data-project="2">
+            <div class="work-info"><h2>Fixie-Pixie</h2><p>Civic Tech • Object Detection • Smart City</p></div>
+            <div class="work-arrow">→</div>
+            <img src="https://images.unsplash.com/photo-1473646590311-6477b7529402?q=80&w=600&auto=format&fit=crop" class="hover-reveal" alt="Bicycle Pothole">
+        </div>
+
+        <div class="work-item hover-trigger" data-project="3">
+            <div class="work-info"><h2>SkyVision</h2><p>Computer Vision • Drone • Real-time Tracking</p></div>
+            <div class="work-arrow">→</div>
+            <img src="https://images.unsplash.com/photo-1506947411487-a56738267384?q=80&w=600&auto=format&fit=crop" class="hover-reveal" alt="Drone Vision">
+        </div>
+
+        <div class="work-item hover-trigger" data-project="4">
+            <div class="work-info"><h2>Chatbot+Portfolio</h2><p>AI Integration • React • UX</p></div>
+            <div class="work-arrow">→</div>
+            <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=600&auto=format&fit=crop" class="hover-reveal" alt="Dashboard Laptop">
+        </div>
+    </section>
+
+    <section id="thoughts">
+        <h2 class="section-header reveal-text">Thoughts</h2>
+        <div class="thought-item hover-trigger">
+            <div class="thought-date">Sep 20, 2025</div>
+            <div class="thought-title">Building a "Who's Viewing" Profile Selector in React</div>
+        </div>
+        <div class="thought-item hover-trigger">
+            <div class="thought-date">Sep 19, 2025</div>
+            <div class="thought-title">The Future of AI in Cinematography</div>
+        </div>
+        <div class="thought-item hover-trigger">
+            <div class="thought-date">Jan 24, 2025</div>
+            <div class="thought-title">Why I Limit My Colors to Create Better Art</div>
+        </div>
+    </section>
+
+    <section id="contact">
+        <h2 class="section-header reveal-text">Get in Touch</h2>
+        <div class="contact-layout">
+            <div>
+                <p style="font-size:1.5rem; margin-bottom:2rem; color:#aaa;">I always love connecting with people who share my passion for design, technology, and business.</p>
+                <p>Dallas, TX<br>hello@shishiraryal.com</p>
+            </div>
+            <form class="contact-form" onsubmit="event.preventDefault(); alert('Sent!');">
+                <input type="text" placeholder="Name" required class="hover-trigger">
+                <input type="email" placeholder="Email" required class="hover-trigger">
+                <textarea rows="4" placeholder="Message" class="hover-trigger"></textarea>
+                <button type="submit" class="btn hover-trigger">Send Message</button>
+            </form>
+        </div>
+    </section>
+
+    <footer>
+        <p>Based in Dallas • Open for Collaborations</p>
+        <p style="margin-top: 1rem; font-size: 0.7rem;">©2025 Shishir Aryal Portfolio</p>
+    </footer>
+
+    <div class="project-modal" id="modal">
+        <button class="close-btn hover-trigger" id="closeModal">Close Project</button>
+        <div class="modal-content">
+            <h1 class="modal-title" id="m-title">Title</h1>
+            <div class="modal-tags" id="m-tags">TAGS</div>
+            <div class="modal-grid">
+                <div><h4 style="color:var(--accent-color);margin-bottom:1rem;">THE CHALLENGE</h4><p class="modal-desc" id="m-desc">Desc</p></div>
+                <div><h4 style="color:var(--accent-color);margin-bottom:1rem;">MY ROLE</h4><ul style="color:#999;line-height:1.8;"><li>Strategy</li><li>Design</li><li>Code</li></ul></div>
+            </div>
+            <div class="modal-gallery" id="m-gallery"></div>
+        </div>
+    </div>
+
+    <div class="project-modal" id="drone-modal">
+        <button class="close-btn hover-trigger" id="closeDroneModal">Close Gallery</button>
+        <div class="modal-content">
+            <h1 class="modal-title">Drone Cinematography</h1>
+            <div class="modal-tags">AERIAL / VIDEO / CREATIVE</div>
+            
+            <div style="margin-bottom: 4rem;">
+                <h4 style="color:var(--accent-color); margin-bottom:1rem; font-family:var(--font-mono);">MY PERSPECTIVE FROM ABOVE</h4>
+                <p class="modal-desc">Explore the world through my lens. This collection showcases my best aerial footage, capturing landscapes, cityscapes, and unique moments from a bird's-eye view. I specialize in smooth, cinematic movements and creative composition.</p>
+            </div>
+
+            <div class="modal-gallery" id="drone-gallery">
+                <div class="modal-img" style="height: 50vh;">
+                    <iframe width="100%" height="100%" src="https://www.youtube.com/embed/dQw4w9WgXcQ?si=aJc8g_aK1b2c3d4e&controls=0&rel=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                </div>
+                <div class="modal-img">
+                    <img src="https://images.unsplash.com/photo-1473968512647-3e447244af8f?q=80&w=1200" alt="Drone Shot 1">
+                </div>
+                <div class="modal-img">
+                    <img src="https://images.unsplash.com/photo-1506947411487-a56738267384?q=80&w=1200" alt="Drone Shot 2">
+                </div>
+                 <div class="modal-img">
+                    <img src="https://images.unsplash.com/photo-1512453979798-5ea936a7fe48?q=80&w=1200" alt="Drone Shot 3">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- UPDATED PROJECT DATA FROM UPLOADED IMAGE ---
+        const projects = {
+            1: {
+                title: "Klopchik-AI",
+                tags: "AI / NLP / Custom Model",
+                desc: "KlopchikAI is a custom AI model designed to understand context and answer questions based on specific user-provided datasets. It features a conversational interface and advanced context retention.",
+                images: ["https://images.unsplash.com/photo-1531746790731-6c087fecd65a?q=80&w=1200", "https://images.unsplash.com/photo-1555421689-d68471e189f2?q=80&w=1200"]
+            },
+            2: {
+                title: "Fixie-Pixie",
+                tags: "Civic Tech / Object Detection",
+                desc: "An AI-powered system that detects potholes and automatically alerts authorities for repairs. The system uses camera feeds to identify road hazards, streamlining city maintenance.",
+                images: ["https://images.unsplash.com/photo-1473646590311-6477b7529402?q=80&w=1200", "https://images.unsplash.com/photo-1517581177697-a06a6f507551?q=80&w=1200"]
+            },
+            3: {
+                title: "SkyVision",
+                tags: "Computer Vision / Drones",
+                desc: "SkyVision is an AI-powered system that analyzes drone footage to detect and identify objects, vehicles, and people in real-time. It provides actionable insights for aerial surveillance.",
+                images: ["https://images.unsplash.com/photo-1506947411487-a56738267384?q=80&w=1200", "https://images.unsplash.com/photo-1524143986875-f3c45c57c525?q=80&w=1200"]
+            },
+            4: {
+                title: "Chatbot+Portfolio",
+                tags: "Web Dev / AI Integration",
+                desc: "A seamless integration of a custom-trained AI chatbot directly into my personal portfolio website. It acts as a digital assistant, guiding visitors through my projects and skills.",
+                images: ["https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1200", "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1200"]
+            }
+        };
+
+        // --- ANIMATION SETUP ---
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Loader & Hero
+        const tl = gsap.timeline();
+        tl.to(".loader-progress", { width: "100%", duration: 1.5, ease: "power2.inOut" })
+          .to(".loader", { y: "-100%", duration: 1, ease: "expo.inOut" })
+          .from(".reveal-text", { y: 100, opacity: 0, duration: 1, stagger: 0.2, ease: "power3.out" }, "-=0.5");
+
+        // Marquee Animation
+        gsap.to(".marquee-track", { xPercent: -50, repeat: -1, duration: 20, ease: "linear" });
+
+        // Scroll Reveal Elements
+        gsap.utils.toArray('.fade-up').forEach(elem => {
+            gsap.from(elem, {
+                y: 50, opacity: 0, duration: 1,
+                scrollTrigger: { trigger: elem, start: "top 85%" }
+            });
+        });
+
+        // Custom Cursor
+        const cursorDot = document.querySelector('.cursor-dot');
+        const cursorOutline = document.querySelector('.cursor-outline');
+        window.addEventListener('mousemove', (e) => {
+            cursorDot.style.left = `${e.clientX}px`;
+            cursorDot.style.top = `${e.clientY}px`;
+            gsap.to(cursorOutline, { x: e.clientX - 20, y: e.clientY - 20, duration: 0.15 });
+        });
+        document.querySelectorAll('.hover-trigger').forEach(link => {
+            link.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+            link.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+        });
+
+        // Work Image Reveal
+        document.querySelectorAll('.work-item').forEach(item => {
+            const img = item.querySelector('.hover-reveal');
+            item.addEventListener('mousemove', (e) => {
+                gsap.to(img, { x: e.clientX - item.getBoundingClientRect().left + 20, y: e.clientY - item.getBoundingClientRect().top - 100, duration: 0.5 });
+            });
+        });
+
+        // --- MODAL LOGIC ---
+        const modal = document.getElementById('modal');
+        const closeModal = document.getElementById('closeModal');
+        const mTitle = document.getElementById('m-title');
+        const mTags = document.getElementById('m-tags');
+        const mDesc = document.getElementById('m-desc');
+        const mGallery = document.getElementById('m-gallery');
+
+        // Project Modal Open
+        document.querySelectorAll('.work-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const pid = item.getAttribute('data-project');
+                const data = projects[pid];
+                mTitle.innerText = data.title;
+                mTags.innerText = data.tags;
+                mDesc.innerText = data.desc;
+                mGallery.innerHTML = "";
+                data.images.forEach(src => {
+                    const div = document.createElement('div'); div.className = 'modal-img';
+                    div.innerHTML = `<img src="${src}">`; mGallery.appendChild(div);
+                });
+                modal.classList.add('active');
+                gsap.to("#modal .modal-content", { opacity: 1, delay: 0.3, duration: 0.5 });
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Project Modal Close
+        closeModal.addEventListener('click', () => {
+            modal.classList.remove('active');
+            gsap.to("#modal .modal-content", { opacity: 0, duration: 0.3 });
+            document.body.style.overflow = 'auto';
+        });
+
+        // --- DRONE MODAL LOGIC ---
+        const droneModal = document.getElementById('drone-modal');
+        const openDroneModalBtn = document.getElementById('openDroneModal');
+        const closeDroneModalBtn = document.getElementById('closeDroneModal');
+
+        // Drone Modal Open
+        openDroneModalBtn.addEventListener('click', (e) => {
+            e.preventDefault(); // Prevent default anchor link behavior
+            droneModal.classList.add('active');
+            gsap.to("#drone-modal .modal-content", { opacity: 1, delay: 0.3, duration: 0.5 });
+            document.body.style.overflow = 'hidden';
+        });
+
+        // Drone Modal Close
+        closeDroneModalBtn.addEventListener('click', () => {
+            droneModal.classList.remove('active');
+            gsap.to("#drone-modal .modal-content", { opacity: 0, duration: 0.3 });
+            document.body.style.overflow = 'auto';
+        });
+
+    </script>
 </body>
 </html>
