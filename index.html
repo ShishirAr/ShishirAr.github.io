@@ -137,17 +137,9 @@
         .love-item h4 { font-weight: 600; margin-bottom: 0.2rem; }
         .love-item p { font-size: 0.85rem; color: var(--dim-color); }
         
-        /* Style for the clickable drone link */
-        .drone-link {
-            display: block;
-            cursor: none; /* Use custom cursor */
-        }
-        .drone-link h4 {
-            transition: color 0.3s;
-        }
-        .drone-link:hover h4 {
-            color: var(--accent-color);
-        }
+        .drone-link { display: block; cursor: none; }
+        .drone-link h4 { transition: color 0.3s; }
+        .drone-link:hover h4 { color: var(--accent-color); }
 
         /* --- WORKS --- */
         .work-item {
@@ -201,13 +193,26 @@
             overflow-y: auto; padding: 4rem 3rem;
         }
         .project-modal.active { transform: translateY(0); }
+
+        /* --- UPDATED CLOSE BUTTON (ALWAYS BLACK TEXT) --- */
         .close-btn {
             position: absolute; top: 2rem; right: 3rem;
-            font-family: var(--font-mono); font-size: 1.5rem; color: var(--text-color);
-            border: 1px solid var(--dim-color); padding: 0.5rem 1.5rem; border-radius: 50px;
+            font-family: var(--font-mono); 
+            font-size: 1.5rem; 
+            /* Default State: Light Background, Dark Text */
+            background: var(--text-color); 
+            color: var(--bg-color);
+            border: 1px solid var(--text-color); 
+            padding: 0.5rem 1.5rem; border-radius: 50px;
             cursor: none; transition: all 0.3s; text-transform: uppercase;
         }
-        .close-btn:hover { background: var(--accent-color); border-color: var(--accent-color); color: #000; }
+        .close-btn:hover { 
+            /* Hover State: Accent Background, Dark Text (Maintains visibility) */
+            background: var(--accent-color); 
+            border-color: var(--accent-color); 
+            color: var(--bg-color); 
+        }
+
         .modal-content { max-width: 1200px; margin: 6rem auto 0; opacity: 0; transition: opacity 0.5s 0.5s; }
         .modal-title { font-family: var(--font-display); font-size: 5rem; text-transform: uppercase; line-height: 0.9; margin-bottom: 2rem; }
         .modal-tags { display: flex; gap: 1rem; margin-bottom: 4rem; font-family: var(--font-mono); color: var(--accent-color); text-transform: uppercase; }
@@ -358,7 +363,7 @@
         <div class="contact-layout">
             <div>
                 <p style="font-size:1.5rem; margin-bottom:2rem; color:#aaa;">I always love connecting with people who share my passion for design, technology, and business.</p>
-                <p>Dallas, TX<br>aryalshishir79@gmail.com</p>
+                <p>Dallas, TX<br>hello@shishiraryal.com</p>
             </div>
             <form class="contact-form" onsubmit="event.preventDefault(); alert('Sent!');">
                 <input type="text" placeholder="Name" required class="hover-trigger">
@@ -416,7 +421,7 @@
     </div>
 
     <script>
-        // --- UPDATED PROJECT DATA FROM UPLOADED IMAGE ---
+        // --- PROJECT DATA ---
         const projects = {
             1: {
                 title: "Klopchik-AI",
@@ -526,7 +531,7 @@
 
         // Drone Modal Open
         openDroneModalBtn.addEventListener('click', (e) => {
-            e.preventDefault(); // Prevent default anchor link behavior
+            e.preventDefault(); 
             droneModal.classList.add('active');
             gsap.to("#drone-modal .modal-content", { opacity: 1, delay: 0.3, duration: 0.5 });
             document.body.style.overflow = 'hidden';
