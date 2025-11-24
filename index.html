@@ -150,7 +150,13 @@
         .love-item p { font-size: 0.85rem; color: var(--dim-color); }
         
         .drone-link { display: block; cursor: none; }
-        .drone-link h4 { transition: color 0.3s; }
+        .drone-link h4 { transition: color 0.3s;
+                        text-decoration: underline;
+                        text-decoration-color: #ffffff; 
+                        text-underline-offset: 6px;  /* Adds space between text and line */
+                        text-decoration-thickness: 1px;
+                       
+                       }
         .drone-link:hover h4 { color: var(--accent-color); }
 
         /* --- WORKS --- */
