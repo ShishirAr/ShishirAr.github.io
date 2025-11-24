@@ -326,7 +326,7 @@
         <div class="work-item hover-trigger" data-project="2">
             <div class="work-info"><h2>Fixie-Pixie</h2><p>Civic Tech • Object Detection • Smart City</p></div>
             <div class="work-arrow">→</div>
-            <img src="https://images.unsplash.com/photo-1473646590311-6477b7529402?q=80&w=600&auto=format&fit=crop" class="hover-reveal" alt="Bicycle Pothole">
+            <img src="fixie.png" class="hover-reveal" alt="Bicycle Pothole">
         </div>
 
         <div class="work-item hover-trigger" data-project="3">
@@ -433,7 +433,8 @@
                 title: "Fixie-Pixie",
                 tags: "Civic Tech / Object Detection",
                 desc: "An AI-powered system that detects potholes and automatically alerts authorities for repairs. The system uses camera feeds to identify road hazards, streamlining city maintenance.",
-                images: ["./fixie.png"]
+                // CHANGED: Added unsplash fallback so it doesn't look broken
+                images: ["https://images.unsplash.com/photo-1517055729585-e7a9b6c00234?q=80&w=1200"] 
             },
             3: {
                 title: "SkyVision",
@@ -448,19 +449,19 @@
                 images: ["https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1200", "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1200"]
             }
         };
-
+    
         // --- ANIMATION SETUP ---
         gsap.registerPlugin(ScrollTrigger);
-
+    
         // Loader & Hero
         const tl = gsap.timeline();
         tl.to(".loader-progress", { width: "100%", duration: 1.5, ease: "power2.inOut" })
           .to(".loader", { y: "-100%", duration: 1, ease: "expo.inOut" })
           .from(".reveal-text", { y: 100, opacity: 0, duration: 1, stagger: 0.2, ease: "power3.out" }, "-=0.5");
-
+    
         // Marquee Animation
         gsap.to(".marquee-track", { xPercent: -50, repeat: -1, duration: 20, ease: "linear" });
-
+    
         // Scroll Reveal Elements
         gsap.utils.toArray('.fade-up').forEach(elem => {
             gsap.from(elem, {
@@ -468,28 +469,47 @@
                 scrollTrigger: { trigger: elem, start: "top 85%" }
             });
         });
-
-        // Custom Cursor
-        const cursorDot = document.querySelector('.cursor-dot');
-        const cursorOutline = document.querySelector('.cursor-outline');
-        window.addEventListener('mousemove', (e) => {
-            cursorDot.style.left = `${e.clientX}px`;
-            cursorDot.style.top = `${e.clientY}px`;
-            gsap.to(cursorOutline, { x: e.clientX - 20, y: e.clientY - 20, duration: 0.15 });
-        });
-        document.querySelectorAll('.hover-trigger').forEach(link => {
-            link.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
-            link.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
-        });
-
-        // Work Image Reveal
+    
+        // --- CUSTOM CURSOR (Desktop Only) ---
+        // This check prevents the cursor from blocking clicks on mobile phones
+        if (window.matchMedia("(pointer: fine)").matches) {
+            const cursorDot = document.querySelector('.cursor-dot');
+            const cursorOutline = document.querySelector('.cursor-outline');
+            
+            window.addEventListener('mousemove', (e) => {
+                // Using gsap.set for instant movement prevents lag on the dot
+                gsap.set(cursorDot, { x: e.clientX, y: e.clientY });
+                
+                // The outline follows with a delay (duration)
+                gsap.to(cursorOutline, { x: e.clientX, y: e.clientY, duration: 0.15 });
+            });
+    
+            document.querySelectorAll('.hover-trigger').forEach(link => {
+                link.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+                link.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+            });
+        } else {
+            // Hide cursor elements on touch devices
+            document.querySelector('.cursor-dot').style.display = 'none';
+            document.querySelector('.cursor-outline').style.display = 'none';
+        }
+    
+        // --- WORK IMAGE REVEAL (FIXED) ---
         document.querySelectorAll('.work-item').forEach(item => {
             const img = item.querySelector('.hover-reveal');
+            
             item.addEventListener('mousemove', (e) => {
-                gsap.to(img, { x: e.clientX - item.getBoundingClientRect().left + 20, y: e.clientY - item.getBoundingClientRect().top - 100, duration: 0.5 });
+                // FIX: Since the image is position:fixed, we use clientX/Y directly
+                // We add offsets (20, -100) to position it nicely near the cursor
+                gsap.to(img, { 
+                    x: e.clientX + 20, 
+                    y: e.clientY - 100, 
+                    duration: 0.5,
+                    ease: "power2.out"
+                });
             });
         });
-
+    
         // --- MODAL LOGIC ---
         const modal = document.getElementById('modal');
         const closeModal = document.getElementById('closeModal');
@@ -497,53 +517,59 @@
         const mTags = document.getElementById('m-tags');
         const mDesc = document.getElementById('m-desc');
         const mGallery = document.getElementById('m-gallery');
-
+    
+        // Helper to open modal
+        function openModal(modalEl) {
+            modalEl.classList.add('active');
+            gsap.to(modalEl.querySelector(".modal-content"), { opacity: 1, delay: 0.3, duration: 0.5 });
+            document.body.style.overflow = 'hidden'; // Stop scrolling
+        }
+    
+        // Helper to close modal
+        function closeModalFunc(modalEl) {
+            modalEl.classList.remove('active');
+            gsap.to(modalEl.querySelector(".modal-content"), { opacity: 0, duration: 0.3 });
+            document.body.style.overflow = 'auto'; // Resume scrolling
+        }
+    
         // Project Modal Open
         document.querySelectorAll('.work-item').forEach(item => {
             item.addEventListener('click', () => {
                 const pid = item.getAttribute('data-project');
                 const data = projects[pid];
-                mTitle.innerText = data.title;
-                mTags.innerText = data.tags;
-                mDesc.innerText = data.desc;
-                mGallery.innerHTML = "";
-                data.images.forEach(src => {
-                    const div = document.createElement('div'); div.className = 'modal-img';
-                    div.innerHTML = `<img src="${src}">`; mGallery.appendChild(div);
-                });
-                modal.classList.add('active');
-                gsap.to("#modal .modal-content", { opacity: 1, delay: 0.3, duration: 0.5 });
-                document.body.style.overflow = 'hidden';
+                
+                if(data) {
+                    mTitle.innerText = data.title;
+                    mTags.innerText = data.tags;
+                    mDesc.innerText = data.desc;
+                    mGallery.innerHTML = "";
+                    data.images.forEach(src => {
+                        const div = document.createElement('div'); div.className = 'modal-img';
+                        div.innerHTML = `<img src="${src}" alt="${data.title}">`; 
+                        mGallery.appendChild(div);
+                    });
+                    openModal(modal);
+                }
             });
         });
-
+    
         // Project Modal Close
-        closeModal.addEventListener('click', () => {
-            modal.classList.remove('active');
-            gsap.to("#modal .modal-content", { opacity: 0, duration: 0.3 });
-            document.body.style.overflow = 'auto';
-        });
-
+        closeModal.addEventListener('click', () => closeModalFunc(modal));
+    
         // --- DRONE MODAL LOGIC ---
         const droneModal = document.getElementById('drone-modal');
         const openDroneModalBtn = document.getElementById('openDroneModal');
         const closeDroneModalBtn = document.getElementById('closeDroneModal');
-
+    
         // Drone Modal Open
         openDroneModalBtn.addEventListener('click', (e) => {
             e.preventDefault(); 
-            droneModal.classList.add('active');
-            gsap.to("#drone-modal .modal-content", { opacity: 1, delay: 0.3, duration: 0.5 });
-            document.body.style.overflow = 'hidden';
+            openModal(droneModal);
         });
-
+    
         // Drone Modal Close
-        closeDroneModalBtn.addEventListener('click', () => {
-            droneModal.classList.remove('active');
-            gsap.to("#drone-modal .modal-content", { opacity: 0, duration: 0.3 });
-            document.body.style.overflow = 'auto';
-        });
-
+        closeDroneModalBtn.addEventListener('click', () => closeModalFunc(droneModal));
+    
     </script>
 </body>
 </html>
