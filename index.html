@@ -247,6 +247,22 @@
             .modal-grid, .contact-layout { grid-template-columns: 1fr; }
             .nav-links, .hover-reveal { display: none; }
         }
+        /* --- SOCIAL ICONS --- */
+    .social-links {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        margin: 2rem 0; /* Adds space above and below the icons */
+    }
+    .social-icon {
+        color: var(--dim-color);
+        font-size: 1.5rem;
+        transition: all 0.3s ease;
+    }
+    .social-icon:hover {
+        color: var(--accent-color);
+        transform: translateY(-3px); /* Subtle lift effect */
+    }
     </style>
 </head>
 <body>
@@ -440,6 +456,25 @@
             </div>
         </div>
     </div>
+    <footer>
+        <p>Based in Dallas • Open for Collaborations</p>
+        
+        <div class="social-links">
+            <a href="#" target="_blank" class="social-icon hover-trigger">
+                <i class="fa-brands fa-linkedin-in"></i>
+            </a>
+            <a href="#" target="_blank" class="social-icon hover-trigger">
+                <i class="fa-brands fa-github"></i>
+            </a>
+            <a href="#" target="_blank" class="social-icon hover-trigger">
+                <i class="fa-brands fa-instagram"></i>
+            </a>
+            <a href="#" target="_blank" class="social-icon hover-trigger">
+                <i class="fa-brands fa-spotify"></i>
+            </a>
+        </div>
+        <p style="margin-top: 1rem; font-size: 0.7rem;">©2025 Shishir Aryal Portfolio</p>
+    </footer>
 
     <script>
         // --- PROJECT DATA ---
