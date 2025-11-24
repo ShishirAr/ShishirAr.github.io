@@ -9,6 +9,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Oswald:wght@400;500&family=Syne:wght@700;800&display=swap" rel="stylesheet">
     
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
@@ -108,7 +110,6 @@
             letter-spacing: 2px; font-size: 0.9rem;
         }
         
-        /* Resume Link Specific Styles */
         .resume-link {
             text-decoration: underline;
             text-underline-offset: 5px;
@@ -116,9 +117,7 @@
             margin-top: 0.5rem;
             display: inline-block;
         }
-        .resume-link:hover {
-            color: #fff;
-        }
+        .resume-link:hover { color: #fff; }
 
         /* --- MARQUEE --- */
         .marquee-container {
@@ -149,15 +148,19 @@
         .love-item h4 { font-weight: 600; margin-bottom: 0.2rem; }
         .love-item p { font-size: 0.85rem; color: var(--dim-color); }
         
+        /* Updated Drone Link with White Underline */
         .drone-link { display: block; cursor: none; }
-        .drone-link h4 { transition: color 0.3s;
-                        text-decoration: underline;
-                        text-decoration-color: #ffffff; 
-                        text-underline-offset: 6px;  /* Adds space between text and line */
-                        text-decoration-thickness: 1px;
-                       
-                       }
-        .drone-link:hover h4 { color: var(--accent-color); }
+        .drone-link h4 { 
+            transition: all 0.3s; 
+            text-decoration: underline;
+            text-decoration-color: #ffffff; 
+            text-underline-offset: 6px;
+            text-decoration-thickness: 1px;
+        }
+        .drone-link:hover h4 { 
+            color: var(--accent-color);
+            text-decoration-color: var(--accent-color); 
+        }
 
         /* --- WORKS --- */
         .work-item {
@@ -212,24 +215,14 @@
         }
         .project-modal.active { transform: translateY(0); }
 
-        /* --- UPDATED CLOSE BUTTON (ALWAYS BLACK TEXT) --- */
         .close-btn {
             position: absolute; top: 2rem; right: 3rem;
-            font-family: var(--font-mono); 
-            font-size: 1.5rem; 
-            /* Default State: Light Background, Dark Text */
-            background: var(--text-color); 
-            color: var(--bg-color);
-            border: 1px solid var(--text-color); 
-            padding: 0.5rem 1.5rem; border-radius: 50px;
+            font-family: var(--font-mono); font-size: 1.5rem; 
+            background: var(--text-color); color: var(--bg-color);
+            border: 1px solid var(--text-color); padding: 0.5rem 1.5rem; border-radius: 50px;
             cursor: none; transition: all 0.3s; text-transform: uppercase;
         }
-        .close-btn:hover { 
-            /* Hover State: Accent Background, Dark Text (Maintains visibility) */
-            background: var(--accent-color); 
-            border-color: var(--accent-color); 
-            color: var(--bg-color); 
-        }
+        .close-btn:hover { background: var(--accent-color); border-color: var(--accent-color); color: var(--bg-color); }
 
         .modal-content { max-width: 1200px; margin: 6rem auto 0; opacity: 0; transition: opacity 0.5s 0.5s; }
         .modal-title { font-family: var(--font-display); font-size: 5rem; text-transform: uppercase; line-height: 0.9; margin-bottom: 2rem; }
@@ -239,30 +232,24 @@
         .modal-gallery { display: grid; grid-template-columns: 1fr; gap: 2rem; }
         .modal-img { width: 100%; height: 60vh; background: #222; overflow: hidden; }
 
-        /* --- FOOTER --- */
+        /* --- FOOTER & ICONS --- */
         footer { padding: 4rem 3rem; border-top: 1px solid var(--border-color); text-align: center; font-family: var(--font-mono); color: var(--dim-color); text-transform: uppercase; }
+        
+        .social-links {
+            display: flex; justify-content: center; gap: 2rem; margin: 2rem 0;
+        }
+        .social-icon {
+            color: var(--dim-color); font-size: 1.5rem; transition: all 0.3s ease;
+        }
+        .social-icon:hover {
+            color: var(--accent-color); transform: translateY(-3px);
+        }
 
         @media(max-width: 768px) {
             .hero h1, .section-header, .modal-title { font-size: 3rem; }
             .modal-grid, .contact-layout { grid-template-columns: 1fr; }
             .nav-links, .hover-reveal { display: none; }
         }
-        /* --- SOCIAL ICONS --- */
-    .social-links {
-        display: flex;
-        justify-content: center;
-        gap: 2rem;
-        margin: 2rem 0; /* Adds space above and below the icons */
-    }
-    .social-icon {
-        color: var(--dim-color);
-        font-size: 1.5rem;
-        transition: all 0.3s ease;
-    }
-    .social-icon:hover {
-        color: var(--accent-color);
-        transform: translateY(-3px); /* Subtle lift effect */
-    }
     </style>
 </head>
 <body>
@@ -413,6 +400,14 @@
 
     <footer>
         <p>Based in Dallas • Open for Collaborations</p>
+        
+        <div class="social-links">
+            <a href="#" target="_blank" class="social-icon hover-trigger"><i class="fa-brands fa-linkedin-in"></i></a>
+            <a href="#" target="_blank" class="social-icon hover-trigger"><i class="fa-brands fa-github"></i></a>
+            <a href="#" target="_blank" class="social-icon hover-trigger"><i class="fa-brands fa-instagram"></i></a>
+            <a href="#" target="_blank" class="social-icon hover-trigger"><i class="fa-brands fa-spotify"></i></a>
+        </div>
+
         <p style="margin-top: 1rem; font-size: 0.7rem;">©2025 Shishir Aryal Portfolio</p>
     </footer>
 
@@ -456,25 +451,6 @@
             </div>
         </div>
     </div>
-    <footer>
-        <p>Based in Dallas • Open for Collaborations</p>
-        
-        <div class="social-links">
-            <a href="https://www.linkedin.com/in/shishir-aryal-006b31220/" target="_blank" class="social-icon hover-trigger">
-                <i class="fa-brands fa-linkedin-in"></i>
-            </a>
-            <a href="#" target="_blank" class="social-icon hover-trigger">
-                <i class="fa-brands fa-github"></i>
-            </a>
-            <a href="#" target="_blank" class="social-icon hover-trigger">
-                <i class="fa-brands fa-instagram"></i>
-            </a>
-            <a href="#" target="_blank" class="social-icon hover-trigger">
-                <i class="fa-brands fa-spotify"></i>
-            </a>
-        </div>
-        <p style="margin-top: 1rem; font-size: 0.7rem;">©2025 Shishir Aryal Portfolio</p>
-    </footer>
 
     <script>
         // --- PROJECT DATA ---
@@ -489,7 +465,6 @@
                 title: "Fixie-Pixie",
                 tags: "Civic Tech / Object Detection",
                 desc: "An AI-powered system that detects potholes and automatically alerts authorities for repairs. The system uses camera feeds to identify road hazards, streamlining city maintenance.",
-                // CHANGED: Added unsplash fallback so it doesn't look broken
                 images: ["https://images.unsplash.com/photo-1517055729585-e7a9b6c00234?q=80&w=1200"] 
             },
             3: {
@@ -527,16 +502,12 @@
         });
     
         // --- CUSTOM CURSOR (Desktop Only) ---
-        // This check prevents the cursor from blocking clicks on mobile phones
         if (window.matchMedia("(pointer: fine)").matches) {
             const cursorDot = document.querySelector('.cursor-dot');
             const cursorOutline = document.querySelector('.cursor-outline');
             
             window.addEventListener('mousemove', (e) => {
-                // Using gsap.set for instant movement prevents lag on the dot
                 gsap.set(cursorDot, { x: e.clientX, y: e.clientY });
-                
-                // The outline follows with a delay (duration)
                 gsap.to(cursorOutline, { x: e.clientX, y: e.clientY, duration: 0.15 });
             });
     
@@ -545,7 +516,6 @@
                 link.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
             });
         } else {
-            // Hide cursor elements on touch devices
             document.querySelector('.cursor-dot').style.display = 'none';
             document.querySelector('.cursor-outline').style.display = 'none';
         }
@@ -553,16 +523,8 @@
         // --- WORK IMAGE REVEAL (FIXED) ---
         document.querySelectorAll('.work-item').forEach(item => {
             const img = item.querySelector('.hover-reveal');
-            
             item.addEventListener('mousemove', (e) => {
-                // FIX: Since the image is position:fixed, we use clientX/Y directly
-                // We add offsets (20, -100) to position it nicely near the cursor
-                gsap.to(img, { 
-                    x: e.clientX + 20, 
-                    y: e.clientY - 100, 
-                    duration: 0.5,
-                    ease: "power2.out"
-                });
+                gsap.to(img, { x: e.clientX + 20, y: e.clientY - 100, duration: 0.5, ease: "power2.out" });
             });
         });
     
@@ -574,26 +536,22 @@
         const mDesc = document.getElementById('m-desc');
         const mGallery = document.getElementById('m-gallery');
     
-        // Helper to open modal
         function openModal(modalEl) {
             modalEl.classList.add('active');
             gsap.to(modalEl.querySelector(".modal-content"), { opacity: 1, delay: 0.3, duration: 0.5 });
-            document.body.style.overflow = 'hidden'; // Stop scrolling
+            document.body.style.overflow = 'hidden';
         }
     
-        // Helper to close modal
         function closeModalFunc(modalEl) {
             modalEl.classList.remove('active');
             gsap.to(modalEl.querySelector(".modal-content"), { opacity: 0, duration: 0.3 });
-            document.body.style.overflow = 'auto'; // Resume scrolling
+            document.body.style.overflow = 'auto';
         }
     
-        // Project Modal Open
         document.querySelectorAll('.work-item').forEach(item => {
             item.addEventListener('click', () => {
                 const pid = item.getAttribute('data-project');
                 const data = projects[pid];
-                
                 if(data) {
                     mTitle.innerText = data.title;
                     mTags.innerText = data.tags;
@@ -609,7 +567,6 @@
             });
         });
     
-        // Project Modal Close
         closeModal.addEventListener('click', () => closeModalFunc(modal));
     
         // --- DRONE MODAL LOGIC ---
@@ -617,13 +574,7 @@
         const openDroneModalBtn = document.getElementById('openDroneModal');
         const closeDroneModalBtn = document.getElementById('closeDroneModal');
     
-        // Drone Modal Open
-        openDroneModalBtn.addEventListener('click', (e) => {
-            e.preventDefault(); 
-            openModal(droneModal);
-        });
-    
-        // Drone Modal Close
+        openDroneModalBtn.addEventListener('click', (e) => { e.preventDefault(); openModal(droneModal); });
         closeDroneModalBtn.addEventListener('click', () => closeModalFunc(droneModal));
     
     </script>
